@@ -125,10 +125,6 @@ def calc_exp(cur_lv, target_lv, cur_exp, is_oath=False, is_fairy=False):
     fairy = 3 if is_fairy else 1
     exp_table = GFLCore.exp_fairy if is_fairy else GFLCore.exp_doll
 
-    # 레벨 검증 (시작레벨보다 목표레벨이 높은지 등)
-    if cur_lv > target_lv:
-        return
-
     # 구간별 분류
     if target_lv > 115:
         rp += math.ceil((exp_table[target_lv] - exp_table[max(cur_lv, 115)] - cur_exp) / (3000 * oath))
