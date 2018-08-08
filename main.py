@@ -20,7 +20,7 @@ db_handler = SQLiteHandler('log.db')
 logger.addHandler(db_handler)
 
 re_build_time = re.compile("^([0-9]{1,2})?[ :]?([0-5][0-9])$")
-re_rp_calc = re.compile("([0-9]{0,3})[ ,.]([0-9]{0,3})[ ,.]([0-9]+)?[ ,.]?(서약|ㅅㅇ)?[ ,.]?(요정|ㅇㅈ)?")
+re_rp_calc = re.compile("([0-9]{0,3})[ ,.]([0-9]{0,3})[ ,.]?([0-9]+)?[ ,.]?(서약|ㅅㅇ)?[ ,.]?(요정|ㅇㅈ)?")
 
 
 # Chatterbox
