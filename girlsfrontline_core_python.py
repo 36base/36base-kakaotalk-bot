@@ -122,7 +122,6 @@ def calc_exp(cur_lv, target_lv, cur_exp, is_oath=False, is_fairy=False):
     """
     rp = 0
     oath = 2 if is_oath else 1
-    fairy = 3 if is_fairy else 1
     exp_table = GFLCore.exp_fairy if is_fairy else GFLCore.exp_doll
 
     # 구간별 분류

@@ -2,12 +2,22 @@ from flask import Flask, request, jsonify
 from chatterbox import Chatter, Text, Keyboard, MessageButton
 import girlsfrontline_core_python as GFLCore
 import re
+import logging
+from logging_sqlite import SQLiteHandler
 
 application = Flask(__name__)
 
 chatter = Chatter(memory='sqlite',
                   frequency=20,
                   fallback=True)
+
+# Logging 모듈 설정
+logger = logging.getLogger("main")
+logger.setLevel(logging.INFO)
+
+# 핸들러 설정 및 추가
+db_handler = SQLiteHandler('log.db')
+logger.addHandler(db_handler)
 
 re_build_time = re.compile("^([0-9]{1,2})?[ :]?([0-5][0-9])$")
 re_rp_calc = re.compile("([0-9]{0,3})[ ,.]([0-9]{0,3})[ ,.]([0-9]+)?[ ,.]?(서약|ㅅㅇ)?[ ,.]?(요정|ㅇㅈ)?")
@@ -38,6 +48,8 @@ def search_doll(data):
         '2자리에서 4자리의 숫자로 입력해주세요\n'
         '예시) 110 또는 0730'
     )
+    extra_data = dict(user_status='홈', user_key=data['user_key'], content=data['content'])
+    logger.info(msg, extra=extra_data)
     return Text(msg) + Keyboard(type='text')
 
 
@@ -55,6 +67,8 @@ def serched_doll(data):
             msg = "검색 결과가 없습니다."
     else:
         msg = "잘못된 입력입니다."
+    extra_data = dict(user_status='인형 검색 페이지', user_key=data['user_key'], content=data['content'])
+    logger.info(msg, extra=extra_data)
     return Text(msg) + chatter.home()
 
 
@@ -65,6 +79,8 @@ def search_equip(data):
         '2자리에서 4자리의 숫자로 입력해주세요\n'
         '예시) 110 또는 0111'
     )
+    extra_data = dict(user_status='홈', user_key=data['user_key'], content=data['content'])
+    logger.info(msg, extra=extra_data)
     return Text(msg) + Keyboard(type='text')
 
 
@@ -85,6 +101,8 @@ def serched_equip(data):
             msg = "찾은 장비/요정 목록:\n{0}".format("\n".join(equips))
         else:
             msg = "검색 결과가 없습니다."
+    extra_data = dict(user_status='장비 검색 페이지', user_key=data['user_key'], content=data['content'])
+    logger.info(msg, extra=extra_data)
     return Text(msg) + chatter.home()
 
 
@@ -96,6 +114,8 @@ def calc_report(data):
         '순서로 입력하면 됩니다. 띄어쓰기 또는 쉼표로 구분합니다.'
         '서약 여부는 "서약"이라고 쓰면 됩니다.'
     )
+    extra_data = dict(user_status='홈', user_key=data['user_key'], content=data['content'])
+    logger.info(msg, extra=extra_data)
     return Text(msg) + Keyboard(type='text')
 
 
@@ -114,6 +134,10 @@ def calc_report_return(data):
         else:
             rp = GFLCore.calc_exp(int(cur_lv), int(tar_lv), int(cur_xp), is_oath, is_fairy)
             msg = '필요 작전 보고서: {0}개'.format(rp)
+    else:
+        msg = "올바르지 않은 입력입니다."
+    extra_data = dict(user_status='홈', user_key=data['user_key'], content=data['content'])
+    logger.info(msg, extra=extra_data)
     return Text(msg) + chatter.home()
 
 
@@ -126,6 +150,8 @@ def calc_support(data):
         label="여기를 눌러주세요",
         url="https://tempkaridc.github.io/gf/"
     )
+    extra_data = dict(user_status='홈', user_key=data['user_key'], content=data['content'])
+    logger.info(msg, extra=extra_data)
     return Text(msg) + msg_bt + chatter.home()
 
 
