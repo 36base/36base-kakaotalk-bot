@@ -26,6 +26,9 @@ re_build_time = re.compile(r"^([0-9]{1,2})?[ :]?([0-5][0-9])$")
 re_rp_calc = re.compile(r"([0-9]{0,3})[ ,.]([0-9]{0,3})[ ,.]?([0-9]+)?[ ,.]?(서약|ㅅㅇ)?[ ,.]?(요정|ㅇㅈ)?")
 re_rank_poll = re.compile(r"([0-9]{0,6})(점)?[ .,\n]([0-9]{1,3})(퍼|퍼센트|%)?[ .,\n]?$")
 
+# RankingPoll
+rank = EventRankPoll("rank_beta", "20180810")
+
 
 # Chatterbox
 
@@ -162,10 +165,10 @@ def calc_support(data):
 @chatter.rule(action='랭킹 집계', src='홈', dest='랭킹 집계')
 def rank_poll(data):
     msg = (
-        "이벤트 전역 랭킹 입력 기능을 시작합니다.\n"
+        "(시험중입니다)\n이벤트 전역 랭킹 입력 기능을 시작합니다.\n"
         "(점수) (퍼센트) "
         "순서로 입력해주세요. 100위 이내는 0퍼센트로 작성해주세요.\n"
-        "ex) 123456 78퍼 9제대 0"
+        "ex) 123456 78퍼"
     )
     extra_data = dict(user_status='홈', user_key=data['user_key'], content=data['content'])
     logger.info(msg, extra=extra_data)
@@ -177,7 +180,6 @@ def rank_poll_input(data):
     re_match = re_rank_poll.match(data["content"])
     if re_match:
         score, _, percent, _ = re_match.groups()
-        rank = EventRankPoll("rank")
         rank.log(data['user_key'], int(score), int(percent))
         msg = "등록이 완료되었습니다. 감사합니다."
     else:
