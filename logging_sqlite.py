@@ -7,10 +7,9 @@ import time
 
 initial_sql = (
     "CREATE TABLE IF NOT EXISTS log("
-    "timestamp TEXT,"
+    "timestamp INT,"
     "source TEXT,"
     "log_level INT,"
-    "log_level_name TEXT,"
     "user_status TXT,"
     "user_key TEXT,"
     "content TEXT,"
@@ -27,7 +26,6 @@ insertion_sql = (
     "timestamp,"
     "source,"
     "log_level,"
-    "log_level_name,"
     "user_status,"
     "user_key,"
     "content,"
@@ -38,10 +36,9 @@ insertion_sql = (
     "thread,"
     "thread_name)"
     "VALUES ("
-    "'%(dbtime)s',"
+    "%(dbtime)d,"
     "'%(name)s',"
     "%(levelno)d,"
-    "'%(levelname)s',"
     "'%(user_status)s',"
     "'%(user_key)s',"
     "'%(content)s',"
@@ -86,6 +83,22 @@ class SQLiteHandler(logging.Handler):
         conn = sqlite3.connect(self.db)
         conn.execute(sql)
         conn.commit()  # not efficient, but hopefully thread-safe
+
+
+# def main():
+#     logger = logging.getLogger()
+#     logger.setLevel(logging.INFO)
+#
+#     # sqlite handler
+#     sh = SQLiteHandler(db="test.db")
+#     sh.setLevel(logging.INFO)
+#     logging.getLogger().addHandler(sh)
+#
+#     # user_status, user_key, content
+#     extra_data = dict(user_status="홈", user_key="asdfuserkey", content="후냐앙")
+#     # test
+#     logging.info('Start', extra=extra_data)
+#     logging.info('End', extra=extra_data)
 
 
 if __name__ == '__main__':
