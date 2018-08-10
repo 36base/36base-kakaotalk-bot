@@ -4,6 +4,7 @@ import girlsfrontline_core_python as GFLCore
 import re
 import logging
 from logging_sqlite import SQLiteHandler
+from ranking_poll import EventRankPoll
 
 application = Flask(__name__)
 
@@ -19,8 +20,11 @@ logger.setLevel(logging.INFO)
 db_handler = SQLiteHandler('log.db')
 logger.addHandler(db_handler)
 
-re_build_time = re.compile("^([0-9]{1,2})?[ :]?([0-5][0-9])$")
-re_rp_calc = re.compile("([0-9]{0,3})[ ,.]([0-9]{0,3})[ ,.]?([0-9]+)?[ ,.]?(서약|ㅅㅇ)?[ ,.]?(요정|ㅇㅈ)?")
+
+# 정규식 컴파일
+re_build_time = re.compile(r"^([0-9]{1,2})?[ :]?([0-5][0-9])$")
+re_rp_calc = re.compile(r"([0-9]{0,3})[ ,.]([0-9]{0,3})[ ,.]?([0-9]+)?[ ,.]?(서약|ㅅㅇ)?[ ,.]?(요정|ㅇㅈ)?")
+re_rank_poll = re.compile(r"([0-9]{0,6})(점)?[ .,\n]([0-9]{1,3})(퍼|퍼센트|%)?[ .,\n]?$")
 
 
 # Chatterbox
@@ -29,7 +33,7 @@ re_rp_calc = re.compile("([0-9]{0,3})[ ,.]([0-9]{0,3})[ ,.]?([0-9]+)?[ ,.]?(서�
 # 초기 화면 설정
 @chatter.base(name='홈')
 def home_keyboard():
-    home_buttons = ['인형 검색', '장비 검색', '작전보고서 계산', '군수지원 계산기']
+    home_buttons = ['인형 검색', '장비 검색', '작전보고서 계산', '군수지원 계산기', '랭킹 집계']
     return Keyboard(home_buttons)
 
 
@@ -153,6 +157,37 @@ def calc_support(data):
     extra_data = dict(user_status='홈', user_key=data['user_key'], content=data['content'])
     logger.info(msg, extra=extra_data)
     return Text(msg) + msg_bt + chatter.home()
+
+
+@chatter.rule(action='랭킹 집계', src='홈', dest='랭킹 집계')
+def rank_poll(data):
+    msg = (
+        "이벤트 전역 랭킹 입력 기능을 시작합니다.\n"
+        "(점수) (퍼센트) "
+        "순서로 입력해주세요. 100위 이내는 0퍼센트로 작성해주세요.\n"
+        "ex) 123456 78퍼 9제대 0"
+    )
+    extra_data = dict(user_status='홈', user_key=data['user_key'], content=data['content'])
+    logger.info(msg, extra=extra_data)
+    return Text(msg) + Keyboard(type='text')
+
+
+@chatter.rule(action="*", src="랭킹 집계", dest="홈")
+def rank_poll_input(data):
+    re_match = re_rank_poll.match(data["content"])
+    if re_match:
+        score, _, percent, _ = re_match.groups()
+        rank = EventRankPoll("rank")
+        rank.log(data['user_key'], int(score), int(percent))
+        msg = "등록이 완료되었습니다. 감사합니다."
+    else:
+        msg = (
+            "올바른 포맷으로 입력해주세요."
+            " 만약 제대로 입력했는데 이 오류가 발생했다면, 관리자에게 알려주세요."
+        )
+    extra_data = dict(user_status='랭킹 집계', user_key=data['user_key'], content=data['content'])
+    logger.info(msg, extra=extra_data)
+    return Text(msg) + chatter.home()
 
 
 # ##################
