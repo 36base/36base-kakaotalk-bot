@@ -94,6 +94,7 @@ def search_equip(data):
 @chatter.rule(action='*', src='장비 검색 페이지', dest='홈')
 def serched_equip(data):
     re_match = re_build_time.match(data['content'])
+    msg = "기본 메시지"
     if re_match and len(data['content']) < 5:
         b_hour, b_min = re_match.groups('0')
         build_time = int(b_hour) * 3600 + int(b_min) * 60
