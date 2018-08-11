@@ -6,7 +6,7 @@ import time
 
 
 initial_sql = (
-    "CREATE TABLE IF NOT EXISTS log("
+    "CREATE TABLE IF NOT EXISTS log2("
     "timestamp INT,"
     "source TEXT,"
     "log_level INT,"
@@ -15,10 +15,7 @@ initial_sql = (
     "content TEXT,"
     "message TEXT,"
     "module TEXT,"
-    "func_name TEXT,"
-    "process INT,"
-    "thread TEXT,"
-    "thread_name TEXT)"
+    "func_name TEXT)"
 )
 
 insertion_sql = (
@@ -45,9 +42,6 @@ insertion_sql = (
     "'%(msg)s',"
     "'%(module)s',"
     "'%(funcName)s',"
-    "%(process)d,"
-    "'%(thread)s',"
-    "'%(threadName)s'"
     ")"
 )
 

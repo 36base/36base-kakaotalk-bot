@@ -56,12 +56,12 @@ def search_doll(data):
         '예시) 110 또는 0730'
     )
     extra_data = dict(user_status='홈', user_key=data['user_key'], content=data['content'])
-    logger.info(msg, extra=extra_data)
+    logger.info("", extra=extra_data)
     return Text(msg) + Keyboard(type='text')
 
 
 @chatter.rule(action='*', src='인형 검색 페이지', dest='홈')
-def serched_doll(data):
+def searched_doll(data):
     re_match = re_build_time.match(data['content'])
     if re_match:
         b_hour, b_min = re_match.groups(default='0')
@@ -87,12 +87,12 @@ def search_equip(data):
         '예시) 110 또는 0111'
     )
     extra_data = dict(user_status='홈', user_key=data['user_key'], content=data['content'])
-    logger.info(msg, extra=extra_data)
+    logger.info("", extra=extra_data)
     return Text(msg) + Keyboard(type='text')
 
 
 @chatter.rule(action='*', src='장비 검색 페이지', dest='홈')
-def serched_equip(data):
+def searched_equip(data):
     re_match = re_build_time.match(data['content'])
     msg = "기본 메시지"
     if re_match and len(data['content']) < 5:
@@ -123,7 +123,7 @@ def calc_report(data):
         '서약 여부는 "서약" 또는 "ㅅㅇ" 이라고 쓰면 됩니다.'
     )
     extra_data = dict(user_status='홈', user_key=data['user_key'], content=data['content'])
-    logger.info(msg, extra=extra_data)
+    logger.info("", extra=extra_data)
     return Text(msg) + Keyboard(type='text')
 
 
@@ -159,7 +159,7 @@ def calc_support(data):
         url="https://tempkaridc.github.io/gf/"
     )
     extra_data = dict(user_status='홈', user_key=data['user_key'], content=data['content'])
-    logger.info(msg, extra=extra_data)
+    logger.info("", extra=extra_data)
     return Text(msg) + msg_bt + chatter.home()
 
 
@@ -173,7 +173,7 @@ def go_to_36db(data):
         url="https://girlsfrontline.kr/"
     )
     extra_data = dict(user_status='홈', user_key=data['user_key'], content=data['content'])
-    logger.info(msg, extra=extra_data)
+    logger.info("", extra=extra_data)
     return Text(msg) + msg_bt + chatter.home()
 
 
@@ -186,7 +186,7 @@ def rank_poll(data):
         "ex) 123456 78퍼"
     )
     extra_data = dict(user_status='홈', user_key=data['user_key'], content=data['content'])
-    logger.info(msg, extra=extra_data)
+    logger.info("", extra=extra_data)
     return Text(msg) + Keyboard(type='text')
 
 
