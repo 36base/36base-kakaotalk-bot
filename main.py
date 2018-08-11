@@ -36,7 +36,7 @@ rank = EventRankPoll("rank_beta", "20180810")
 # 초기 화면 설정
 @chatter.base(name='홈')
 def home_keyboard():
-    home_buttons = ['인형 검색', '장비 검색', '작전보고서 계산', '군수지원 계산기', '랭킹 집계']
+    home_buttons = ['인형 검색', '장비 검색', '작전보고서 계산', '군수지원 계산기', '36베이스 바로가기', '랭킹 집계']
     return Keyboard(home_buttons)
 
 
@@ -117,7 +117,7 @@ def serched_equip(data):
 def calc_report(data):
     msg = (
         '작전보고서 계산기입니다\n'
-        '(현재 레벨) (목표 레벨) [현재 경험치] [서약] [인형/요정] '
+        '(현재 레벨) (목표 레벨) [현재 경험치] [서약] [요정] '
         '순서로 입력하면 됩니다. 띄어쓰기 또는 쉼표로 구분합니다.'
         '서약 여부는 "서약"이라고 쓰면 됩니다.'
     )
@@ -156,6 +156,20 @@ def calc_support(data):
     msg_bt = MessageButton(
         label="여기를 눌러주세요",
         url="https://tempkaridc.github.io/gf/"
+    )
+    extra_data = dict(user_status='홈', user_key=data['user_key'], content=data['content'])
+    logger.info(msg, extra=extra_data)
+    return Text(msg) + msg_bt + chatter.home()
+
+
+@chatter.rule(action='36베이스 바로가기', src='홈', dest='홈')
+def go_to_36db(data):
+    msg = (
+        "36베이스 바로가기"
+    )
+    msg_bt = MessageButton(
+        label="여기를 눌러주세요",
+        url="https://girlsfrontline.kr/"
     )
     extra_data = dict(user_status='홈', user_key=data['user_key'], content=data['content'])
     logger.info(msg, extra=extra_data)
