@@ -19,7 +19,7 @@ initial_sql = (
 )
 
 insertion_sql = (
-    "INSERT INTO log("
+    "INSERT INTO log2("
     "timestamp,"
     "source,"
     "log_level,"
@@ -38,7 +38,7 @@ insertion_sql = (
     "'%(content)s',"
     "'%(msg)s',"
     "'%(module)s',"
-    "'%(funcName)s',"
+    "'%(funcName)s'"
     ")"
 )
 
