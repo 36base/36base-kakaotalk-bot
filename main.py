@@ -120,7 +120,7 @@ def calc_report(data):
         '작전보고서 계산기입니다\n'
         '(현재 레벨) (목표 레벨) [현재 경험치] [서약] [요정] '
         '순서로 입력하면 됩니다. 띄어쓰기 또는 쉼표로 구분합니다.'
-        '서약 여부는 "서약"이라고 쓰면 됩니다.'
+        '서약 여부는 "서약" 또는 "ㅅㅇ" 이라고 쓰면 됩니다.'
     )
     extra_data = dict(user_status='홈', user_key=data['user_key'], content=data['content'])
     logger.info(msg, extra=extra_data)
