@@ -30,15 +30,15 @@ insertion_sql = (
     "module,"
     "func_name)"
     "VALUES ("
-    "%(dbtime)d,"
-    "'%(name)s',"
-    "%(levelno)d,"
-    "'%(user_status)s',"
-    "'%(user_key)s',"
-    "'%(content)s',"
-    "'%(msg)s',"
-    "'%(module)s',"
-    "'%(funcName)s'"
+    " :dbtime,"
+    " :name,"
+    " :levelno,"
+    " :user_status,"
+    " :user_key,"
+    " :content,"
+    " :msg,"
+    " :module,"
+    " :funcName"
     ")"
 )
 
@@ -70,9 +70,8 @@ class SQLiteHandler(logging.Handler):
             record.exc_text = ""
 
         # Insert the log record
-        sql = insertion_sql % record.__dict__
         conn = sqlite3.connect(self.db)
-        conn.execute(sql)
+        conn.execute(insertion_sql, record.__dict__)
         conn.commit()  # not efficient, but hopefully thread-safe
 
 
