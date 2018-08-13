@@ -62,18 +62,18 @@ def search_doll(data):
 
 @chatter.rule(action='*', src='인형 검색 페이지', dest='홈')
 def searched_doll(data):
-    re_match = re_build_time.match(data['content'])
+    re_match = re_build_time.match(data['content'].strip())
     if re_match:
         b_hour, b_min = re_match.groups(default='0')
         build_time = int(b_hour) * 3600 + int(b_min) * 60
         searched = GFLCore.doll_find_all(buildTime=build_time)
         dolls = ["{0}: {1}성 {2}".format(n.get('krName', n['name']), n['rank'], n['type'].upper()) for n in searched]
-        if dolls:
+        if dolls and build_time > 0:
             msg = "찾은 인형 목록:\n{0}".format("\n".join(dolls))
         else:
             msg = "검색 결과가 없습니다."
     else:
-        msg = "잘못된 입력입니다."
+        msg = "올바르지 않은 입력입니다."
     extra_data = dict(user_status='인형 검색 페이지', user_key=data['user_key'], content=data['content'])
     logger.info(msg, extra=extra_data)
     return Text(msg) + chatter.home()
@@ -93,9 +93,8 @@ def search_equip(data):
 
 @chatter.rule(action='*', src='장비 검색 페이지', dest='홈')
 def searched_equip(data):
-    re_match = re_build_time.match(data['content'])
-    msg = "기본 메시지"
-    if re_match and len(data['content']) < 5:
+    re_match = re_build_time.match(data['content'].strip())
+    if re_match:
         b_hour, b_min = re_match.groups('0')
         build_time = int(b_hour) * 3600 + int(b_min) * 60
         if build_time < 3600:
@@ -105,10 +104,12 @@ def searched_equip(data):
             searched = GFLCore.fairy_find_all(buildTime=build_time)
             equips = ["{0}".format(n.get('krName', n['name'])) for n in searched]
 
-        if equips:
+        if equips and build_time > 0:
             msg = "찾은 장비/요정 목록:\n{0}".format("\n".join(equips))
         else:
             msg = "검색 결과가 없습니다."
+    else:
+        msg = "올바르지 않은 입력입니다."
     extra_data = dict(user_status='장비 검색 페이지', user_key=data['user_key'], content=data['content'])
     logger.info(msg, extra=extra_data)
     return Text(msg) + chatter.home()
@@ -129,7 +130,7 @@ def calc_report(data):
 
 @chatter.rule(action='*', src='작전보고서 계산', dest='홈')
 def calc_report_return(data):
-    re_match = re_rp_calc.match(data['content'])
+    re_match = re_rp_calc.match(data['content'].strip())
     if re_match:
         cur_lv, tar_lv, cur_xp, is_oath, is_fairy = re_match.groups(default='')
         cur_lv = int(cur_lv)
@@ -192,7 +193,7 @@ def rank_poll(data):
 
 @chatter.rule(action="*", src="랭킹 집계", dest="홈")
 def rank_poll_input(data):
-    re_match = re_rank_poll.match(data["content"])
+    re_match = re_rank_poll.match(data["content"].strip())
     if re_match:
         score, _, percent, _ = re_match.groups()
         rank.log(data['user_key'], int(score), int(percent))
