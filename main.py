@@ -99,7 +99,8 @@ def searched_equip(data):
         build_time = int(b_hour) * 3600 + int(b_min) * 60
         if build_time < 3600:
             searched = GFLCore.equip_find_all(buildTime=build_time)
-            equips = ["{0}: {1}성".format(n.get('krName', n['name']), n['rank']) for n in searched]
+            equips = ["{0}: {1}성 {2}".format(n.get('krName', n['name']), n['rank'], GFLCore.GFLCore.eq_nm[n["type"]])
+                      for n in searched]
         else:
             searched = GFLCore.fairy_find_all(buildTime=build_time)
             equips = ["{0}".format(n.get('krName', n['name'])) for n in searched]

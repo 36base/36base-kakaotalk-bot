@@ -16,6 +16,9 @@ class GFLCore:
         exp_doll = json.load(f)
         exp_fairy = [n * 3 for n in exp_doll]
 
+    with open("data/equip_name.json", "r", encoding='utf-8') as f:
+        eq_nm = json.load(f)
+
 
 def doll_find(**kwargs):
     """고유한 조건으로 인형 정보를 찾을때 사용(id, name 등등)
