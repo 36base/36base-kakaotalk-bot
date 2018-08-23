@@ -34,7 +34,7 @@ logger.addHandler(db_handler)
 # 정규식 컴파일
 re_build_time = re.compile(r"^([0-9]{1,2})?[ :]?([0-5][0-9])$")
 re_rp_calc = re.compile(r"([0-9]{1,3})[ ,.]([0-9]{1,3})[ ,.]?([0-9]+)?[ ,.]?(서약|ㅅㅇ)?[ ,.]?(요정|ㅇㅈ)?")
-re_rank_poll = re.compile(r"([0-9]{0,6})[점]?[ .,]([0-9]{1,3})(퍼|퍼센트|%)?[ .,]?([0-9]{1,3})?[등]?[\n]?(.+)?$")
+re_rank_poll = re.compile(r"([0-9]{0,6})[점]?[ .,]([0-9]{1,3})(퍼|퍼센트|%)?[ .,]?([0-9]{1,3})?[등]?[\n ]?(.+)?$")
 
 # RankingPoll
 rank = EventRankPoll(conn)
@@ -163,7 +163,15 @@ def go_to_36db(data):
 def rank_poll(data):
     extra_data = dict(user_status='홈', **data)
     logger.info(rp.msg_rank_poll, extra=extra_data)
-    return rp.rank_poll
+    last_data = rank.get_today(data["user_key"])
+    if last_data:
+        msg = (
+            "\n\n오늘({0}) 입력한 마지막 기록을 덮어씌웁니다.\n"
+            "{1}점, {2}%"
+        ).format(*last_data[:3])
+    else:
+        msg = ""
+    return Text(rp.msg_rank_poll + msg) + Keyboard(type="text")
 
 
 @chatter.rule(action="*", src="랭킹 집계", dest="홈")
@@ -176,8 +184,8 @@ def rank_poll_input(data):
         msg = "등록이 완료되었습니다. 감사합니다."
     else:
         msg = (
-            "올바른 포맷으로 입력해주세요."
-            " 만약 제대로 입력했는데 이 오류가 발생했다면, 관리자에게 알려주세요."
+            "올바른 포맷으로 입력해주세요. "
+            "만약 제대로 입력했는데 이 오류가 발생했다면, 관리자에게 알려주세요."
         )
     extra_data = dict(user_status='랭킹 집계', **data)
     logger.info(msg, extra=extra_data)
