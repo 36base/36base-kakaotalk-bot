@@ -13,8 +13,9 @@ class GFLCore:
         fairy = json.load(f)
 
     with open("data/exp.json", "r", encoding='utf-8') as f:
-        exp_doll = json.load(f)
+        exp_doll, exp_hoc = json.load(f).values()
         exp_fairy = [n * 3 for n in exp_doll]
+        exp_hoc_hr = [1, 3, 3, 5, 7, 7, 9, 11, 11, 13, 15]
 
     with open("data/equip_name.json", "r", encoding='utf-8') as f:
         eq_nm = json.load(f)
@@ -146,6 +147,24 @@ def calc_exp(cur_lv, target_lv, cur_exp, is_oath=False, is_fairy=False):
     if target_lv <= 100 and cur_lv < 100:
         rp += math.ceil((exp_table[target_lv] - exp_table[cur_lv] - cur_exp) / 3000)
     return rp
+
+
+def calc_exp_hoc(cur_lv, target_lv, cur_exp, fac_lv=10):
+    """
+
+    Args:
+        cur_lv(int): 중장비 부대의 현재 레벨
+        target_lv(int): 중장비 부대의 목표 레벨
+        cur_exp(int): 중장비 부대의 현재 경험치
+        fac_lv(int) 훈련장의 레벨. 0~10렙. 기본은 10(최대)
+
+    Returns:
+        rp(int): 필요한 특수작전보고서 갯수
+        hr(int): 훈련에 필요한 시간
+    """
+    rp = math.ceil((GFLCore.exp_hoc[target_lv] - GFLCore.exp_hoc[cur_lv] - cur_exp) / 3000)
+    hr = math.ceil(rp / GFLCore.exp_hoc_hr[fac_lv])
+    return rp, hr
 
 
 if __name__ == '__main__':
