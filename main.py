@@ -1,10 +1,13 @@
 from flask import Flask, request, jsonify
-from chatterbox import Chatter, Text, Keyboard, MessageButton
+from chatterbox import *
 import girlsfrontline_core_python as GFLCore
 import re
 import logging
 from logging_sqlite import SQLiteHandler
+import json
+
 from ranking_poll import EventRankPoll
+import static_resp as rp
 
 application = Flask(__name__)
 
@@ -50,14 +53,9 @@ def home_keyboard():
 
 @chatter.rule(action='인형 검색', src='홈', dest='인형 검색 페이지')
 def search_doll(data):
-    msg = (
-        '인형 검색을 시작합니다.'
-        '2자리에서 4자리의 숫자로 입력해주세요\n'
-        '예시) 110 또는 0730'
-    )
     extra_data = dict(user_status='홈', user_key=data['user_key'], content=data['content'])
-    logger.info("", extra=extra_data)
-    return Text(msg) + Keyboard(type='text')
+    logger.info(rp.msg_search_doll, extra=extra_data)
+    return rp.search_doll
 
 
 @chatter.rule(action='*', src='인형 검색 페이지', dest='홈')
@@ -81,14 +79,9 @@ def searched_doll(data):
 
 @chatter.rule(action='장비 검색', src='홈', dest='장비 검색 페이지')
 def search_equip(data):
-    msg = (
-        '장비/요정 검색을 시작합니다.'
-        '2자리에서 4자리의 숫자로 입력해주세요\n'
-        '예시) 110 또는 0111'
-    )
     extra_data = dict(user_status='홈', user_key=data['user_key'], content=data['content'])
-    logger.info("", extra=extra_data)
-    return Text(msg) + Keyboard(type='text')
+    logger.info(rp.msg_search_equip, extra=extra_data)
+    return rp.search_equip
 
 
 @chatter.rule(action='*', src='장비 검색 페이지', dest='홈')
@@ -118,15 +111,9 @@ def searched_equip(data):
 
 @chatter.rule(action='작전보고서 계산', src='홈', dest='작전보고서 계산')
 def calc_report(data):
-    msg = (
-        '작전보고서 계산기입니다\n'
-        '(현재 레벨) (목표 레벨) [현재 경험치] [서약] [요정] '
-        '순서로 입력하면 됩니다. 띄어쓰기 또는 쉼표로 구분합니다.'
-        '서약 여부는 "서약" 또는 "ㅅㅇ" 이라고 쓰면 됩니다.'
-    )
     extra_data = dict(user_status='홈', user_key=data['user_key'], content=data['content'])
-    logger.info("", extra=extra_data)
-    return Text(msg) + Keyboard(type='text')
+    logger.info(rp.msg_calc_report, extra=extra_data)
+    return rp.calc_report
 
 
 @chatter.rule(action='*', src='작전보고서 계산', dest='홈')
@@ -153,43 +140,23 @@ def calc_report_return(data):
 
 @chatter.rule(action='군수지원 계산기', src='홈', dest='홈')
 def calc_support(data):
-    msg = (
-        "군수지원 계산기 바로가기"
-    )
-    msg_bt = MessageButton(
-        label="여기를 눌러주세요",
-        url="https://tempkaridc.github.io/gf/"
-    )
     extra_data = dict(user_status='홈', user_key=data['user_key'], content=data['content'])
-    logger.info("", extra=extra_data)
-    return Text(msg) + msg_bt + chatter.home()
+    logger.info(rp.msg_calc_support, extra=extra_data)
+    return rp.calc_support
 
 
 @chatter.rule(action='36베이스 바로가기', src='홈', dest='홈')
 def go_to_36db(data):
-    msg = (
-        "36베이스 바로가기"
-    )
-    msg_bt = MessageButton(
-        label="여기를 눌러주세요",
-        url="https://girlsfrontline.kr/"
-    )
     extra_data = dict(user_status='홈', user_key=data['user_key'], content=data['content'])
-    logger.info("", extra=extra_data)
-    return Text(msg) + msg_bt + chatter.home()
+    logger.info(rp.msg_go_to_36db, extra=extra_data)
+    return rp.go_to_36db
 
 
 @chatter.rule(action='랭킹 집계', src='홈', dest='랭킹 집계')
 def rank_poll(data):
-    msg = (
-        "(시험중입니다)\n이벤트 전역 랭킹 입력 기능을 시작합니다.\n"
-        "(점수) (퍼센트) "
-        "순서로 입력해주세요. 100위 이내는 0퍼센트로 작성해주세요.\n"
-        "ex) 123456 78퍼"
-    )
     extra_data = dict(user_status='홈', user_key=data['user_key'], content=data['content'])
-    logger.info("", extra=extra_data)
-    return Text(msg) + Keyboard(type='text')
+    logger.info(rp.msg_rank_poll, extra=extra_data)
+    return rp.rank_poll
 
 
 @chatter.rule(action="*", src="랭킹 집계", dest="홈")
@@ -239,4 +206,4 @@ def exit_friend(key):
 
 
 if __name__ == '__main__':
-    application.run(debug=True)
+    application.run(debug=True, host='0.0.0.0')
