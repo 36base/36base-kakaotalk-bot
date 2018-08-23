@@ -149,14 +149,14 @@ def calc_report_return(data):
 def calc_support(data):
     extra_data = dict(user_status='홈', **data)
     logger.info(rp.msg_calc_support, extra=extra_data)
-    return rp.calc_support
+    return rp.calc_support + chatter.home()
 
 
 @chatter.rule(action='36베이스 바로가기', src='홈', dest='홈')
 def go_to_36db(data):
     extra_data = dict(user_status='홈', **data)
     logger.info(rp.msg_go_to_36db, extra=extra_data)
-    return rp.go_to_36db
+    return rp.go_to_36db + chatter.home()
 
 
 @chatter.rule(action='랭킹 집계', src='홈', dest='랭킹 집계')

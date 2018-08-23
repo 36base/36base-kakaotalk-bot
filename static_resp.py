@@ -42,6 +42,6 @@ bt_36db = MessageButton(
 search_doll = Text(msg_search_doll) + Keyboard(type="text")
 search_equip = Text(msg_search_equip) + Keyboard(type="text")
 calc_report = Text(msg_calc_report) + Keyboard(type="text")
-calc_support = Text(msg_calc_support) + bt_calc_sp + Keyboard(type="text")
-go_to_36db = Text(msg_go_to_36db) + bt_36db + Keyboard(type="text")
+calc_support = Text(msg_calc_support) + bt_calc_sp
+go_to_36db = Text(msg_go_to_36db) + bt_36db
 # rank_poll = Text(msg_rank_poll) + Keyboard(type="text")
