@@ -3,9 +3,10 @@ from chatterbox import *
 import girlsfrontline_core_python as GFLCore
 import re
 import logging
-from logging_sqlite import SQLiteHandler
 import json
+import pymysql
 
+from logging_db import MySQLHandler
 from ranking_poll import EventRankPoll
 import static_resp as rp
 
@@ -15,22 +16,28 @@ chatter = Chatter(memory='sqlite',
                   frequency=20,
                   fallback=True)
 
+with open("config.json", "r", encoding="utf-8") as f:
+    cf = json.load(f)
+
+# MySQL Connection
+conn = pymysql.connect(**cf["MySQL"])
+
 # Logging 모듈 설정
 logger = logging.getLogger("main")
 logger.setLevel(logging.INFO)
 
 # 핸들러 설정 및 추가
-db_handler = SQLiteHandler('log.db')
+db_handler = MySQLHandler(conn)
 logger.addHandler(db_handler)
 
 
 # 정규식 컴파일
 re_build_time = re.compile(r"^([0-9]{1,2})?[ :]?([0-5][0-9])$")
 re_rp_calc = re.compile(r"([0-9]{1,3})[ ,.]([0-9]{1,3})[ ,.]?([0-9]+)?[ ,.]?(서약|ㅅㅇ)?[ ,.]?(요정|ㅇㅈ)?")
-re_rank_poll = re.compile(r"([0-9]{0,6})(점)?[ .,\n]([0-9]{1,3})(퍼|퍼센트|%)?[ .,\n]?$")
+re_rank_poll = re.compile(r"([0-9]{0,6})[점]?[ .,]([0-9]{1,3})(퍼|퍼센트|%)?[ .,]?([0-9]{1,3})?[등]?[\n]?(.+)?$")
 
 # RankingPoll
-rank = EventRankPoll("rank_beta", "20180810")
+rank = EventRankPoll(conn)
 
 
 # Chatterbox
@@ -53,7 +60,7 @@ def home_keyboard():
 
 @chatter.rule(action='인형 검색', src='홈', dest='인형 검색 페이지')
 def search_doll(data):
-    extra_data = dict(user_status='홈', user_key=data['user_key'], content=data['content'])
+    extra_data = dict(user_status='홈', **data)
     logger.info(rp.msg_search_doll, extra=extra_data)
     return rp.search_doll
 
@@ -72,14 +79,14 @@ def searched_doll(data):
             msg = "검색 결과가 없습니다."
     else:
         msg = "올바르지 않은 입력입니다."
-    extra_data = dict(user_status='인형 검색 페이지', user_key=data['user_key'], content=data['content'])
+    extra_data = dict(user_status='인형 검색 페이지', **data)
     logger.info(msg, extra=extra_data)
     return Text(msg) + chatter.home()
 
 
 @chatter.rule(action='장비 검색', src='홈', dest='장비 검색 페이지')
 def search_equip(data):
-    extra_data = dict(user_status='홈', user_key=data['user_key'], content=data['content'])
+    extra_data = dict(user_status='홈', **data)
     logger.info(rp.msg_search_equip, extra=extra_data)
     return rp.search_equip
 
@@ -104,14 +111,14 @@ def searched_equip(data):
             msg = "검색 결과가 없습니다."
     else:
         msg = "올바르지 않은 입력입니다."
-    extra_data = dict(user_status='장비 검색 페이지', user_key=data['user_key'], content=data['content'])
+    extra_data = dict(user_status='장비 검색 페이지', **data)
     logger.info(msg, extra=extra_data)
     return Text(msg) + chatter.home()
 
 
 @chatter.rule(action='작전보고서 계산', src='홈', dest='작전보고서 계산')
 def calc_report(data):
-    extra_data = dict(user_status='홈', user_key=data['user_key'], content=data['content'])
+    extra_data = dict(user_status='홈', **data)
     logger.info(rp.msg_calc_report, extra=extra_data)
     return rp.calc_report
 
@@ -133,28 +140,28 @@ def calc_report_return(data):
             msg = '필요 작전 보고서: {0}개'.format(rp)
     else:
         msg = "올바르지 않은 입력입니다."
-    extra_data = dict(user_status='홈', user_key=data['user_key'], content=data['content'])
+    extra_data = dict(user_status='홈', **data)
     logger.info(msg, extra=extra_data)
     return Text(msg) + chatter.home()
 
 
 @chatter.rule(action='군수지원 계산기', src='홈', dest='홈')
 def calc_support(data):
-    extra_data = dict(user_status='홈', user_key=data['user_key'], content=data['content'])
+    extra_data = dict(user_status='홈', **data)
     logger.info(rp.msg_calc_support, extra=extra_data)
     return rp.calc_support
 
 
 @chatter.rule(action='36베이스 바로가기', src='홈', dest='홈')
 def go_to_36db(data):
-    extra_data = dict(user_status='홈', user_key=data['user_key'], content=data['content'])
+    extra_data = dict(user_status='홈', **data)
     logger.info(rp.msg_go_to_36db, extra=extra_data)
     return rp.go_to_36db
 
 
 @chatter.rule(action='랭킹 집계', src='홈', dest='랭킹 집계')
 def rank_poll(data):
-    extra_data = dict(user_status='홈', user_key=data['user_key'], content=data['content'])
+    extra_data = dict(user_status='홈', **data)
     logger.info(rp.msg_rank_poll, extra=extra_data)
     return rp.rank_poll
 
@@ -163,15 +170,16 @@ def rank_poll(data):
 def rank_poll_input(data):
     re_match = re_rank_poll.match(data["content"].strip())
     if re_match:
-        score, _, percent, _ = re_match.groups()
-        rank.log(data['user_key'], int(score), int(percent))
+        score, percent, _, ranking, comment = re_match.groups()
+        ranking = int(ranking) if ranking else None
+        rank.log(data['user_key'], int(score), int(percent), ranking, comment)
         msg = "등록이 완료되었습니다. 감사합니다."
     else:
         msg = (
             "올바른 포맷으로 입력해주세요."
             " 만약 제대로 입력했는데 이 오류가 발생했다면, 관리자에게 알려주세요."
         )
-    extra_data = dict(user_status='랭킹 집계', user_key=data['user_key'], content=data['content'])
+    extra_data = dict(user_status='랭킹 집계', **data)
     logger.info(msg, extra=extra_data)
     return Text(msg) + chatter.home()
 
