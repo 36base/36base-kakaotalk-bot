@@ -150,7 +150,7 @@ def calc_report_return(data):
                 msg = '필요 작전 보고서: {0}개'.format(rp)
     else:
         msg = "올바르지 않은 입력입니다."
-    extra_data = dict(user_status='홈', **data)
+    extra_data = dict(user_status='작전보고서 계산', **data)
     logger.info(msg, extra=extra_data)
     return Text(msg) + chatter.home()
 
@@ -171,17 +171,17 @@ def go_to_36db(data):
 
 @chatter.rule(action='랭킹 집계', src='홈', dest='랭킹 집계')
 def rank_poll(data):
-    extra_data = dict(user_status='홈', **data)
-    logger.info(rp.msg_rank_poll, extra=extra_data)
     last_data = rank.get_today(data["user_key"])
     if last_data:
-        msg = (
+        msg = rp.msg_rank_poll + (
             "\n\n오늘({0}) 입력한 마지막 기록을 덮어씌웁니다.\n"
             "{1}점, {2}%"
         ).format(*last_data[:3])
     else:
-        msg = ""
-    return Text(rp.msg_rank_poll + msg) + Keyboard(type="text")
+        msg = rp.msg_rank_poll
+    extra_data = dict(user_status='홈', **data)
+    logger.info(msg, extra=extra_data)
+    return Text(msg) + Keyboard(type="text")
 
 
 @chatter.rule(action="*", src="랭킹 집계", dest="홈")
