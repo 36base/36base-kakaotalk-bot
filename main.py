@@ -12,7 +12,7 @@ import static_resp as rp
 
 application = Flask(__name__)
 
-chatter = Chatter(memory='sqlite',
+chatter = Chatter(memory='dict',
                   frequency=20,
                   fallback=True)
 
