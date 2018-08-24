@@ -137,7 +137,6 @@ def calc_report_return(data):
         is_fairy = True if is_fairy else False
         hoc = True if hoc else False
         hoc_lv = int(hoc_lv) if hoc_lv else 10
-        print(f"{cur_lv}, {tar_lv}, {cur_xp}, {is_oath}, {is_fairy}, {hoc}, {hoc_lv}")
         if cur_lv >= tar_lv or tar_lv > 120 or (tar_lv > 100 and (is_fairy or hoc)):
             msg = '올바르지 않은 입력값입니다.'
         else:
