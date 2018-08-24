@@ -142,6 +142,8 @@ def calc_report_return(data):
             msg = '올바르지 않은 입력값입니다.'
         else:
             if hoc:
+                hoc_lv = 10 if hoc_lv > 10 or hoc_lv < 0 else hoc_lv
+                tar_lv = 100 if tar_lv > 100 else tar_lv
                 rp, hr = GFLCore.calc_exp_hoc(cur_lv, tar_lv, cur_xp, hoc_lv)
                 msg = '필요 특수 작전 보고서: {0}개\n소모시간: {1}시간\n소모 전지량: {2}개'.format(rp, hr, hr * 5)
             else:
