@@ -18,6 +18,7 @@ Flask + uWSGI + nginx 를 사용합니다.
 ```
 Flask
 chatterbox.py
+
 ```
 
 `python 3.5` 이상에서의 정상작동만을 보장합니다.
