@@ -33,7 +33,9 @@ logger.addHandler(db_handler)
 
 # 정규식 컴파일
 re_build_time = re.compile(r"^([0-9]{1,2})?[ :]?([0-5][0-9])$")
-re_rp_calc = re.compile(r"([0-9]{1,3})[ ,.]([0-9]{1,3})[ ,.]?([0-9]+)?[ ,.]?(서약|ㅅㅇ)?[ ,.]?(요정|ㅇㅈ)?")
+re_rp_calc = re.compile(
+    r"([0-9]{1,3})[ ,.]([0-9]{1,3})[ ,.]?([0-9]+)?[ ,.]?(서약|ㅅㅇ)?[ ,.]?(요정|ㅇㅈ)?([화ㅎ][력ㄹ]([1]?[0-9])?)?"
+)
 re_rank_poll = re.compile(r"([0-9]{0,6})[점]?[ .,]([0-9]{1,3})(퍼|퍼센트|%)?[ .,]?([0-9]{1,3})?[등]?[\n ]?(.+)?$")
 
 # RankingPoll
@@ -127,17 +129,24 @@ def calc_report(data):
 def calc_report_return(data):
     re_match = re_rp_calc.match(data['content'].strip())
     if re_match:
-        cur_lv, tar_lv, cur_xp, is_oath, is_fairy = re_match.groups(default='')
+        cur_lv, tar_lv, cur_xp, is_oath, is_fairy, hoc, hoc_lv = re_match.groups(default='')
         cur_lv = int(cur_lv)
         tar_lv = int(tar_lv)
         cur_xp = int(cur_xp) if cur_xp else 0
         is_oath = True if is_oath else False
         is_fairy = True if is_fairy else False
-        if cur_lv >= tar_lv or tar_lv > 120 or (tar_lv > 100 and is_fairy):
+        hoc = True if hoc else False
+        hoc_lv = int(hoc_lv) if hoc_lv else 10
+        print(f"{cur_lv}, {tar_lv}, {cur_xp}, {is_oath}, {is_fairy}, {hoc}, {hoc_lv}")
+        if cur_lv >= tar_lv or tar_lv > 120 or (tar_lv > 100 and (is_fairy or hoc)):
             msg = '올바르지 않은 입력값입니다.'
         else:
-            rp = GFLCore.calc_exp(int(cur_lv), int(tar_lv), int(cur_xp), is_oath, is_fairy)
-            msg = '필요 작전 보고서: {0}개'.format(rp)
+            if hoc:
+                rp, hr = GFLCore.calc_exp_hoc(cur_lv, tar_lv, cur_xp, hoc_lv)
+                msg = '필요 특수 작전 보고서: {0}개\n소모시간: {1}시간\n소모 전지량: {2}개'.format(rp, hr, hr * 5)
+            else:
+                rp = GFLCore.calc_exp(int(cur_lv), int(tar_lv), int(cur_xp), is_oath, is_fairy)
+                msg = '필요 작전 보고서: {0}개'.format(rp)
     else:
         msg = "올바르지 않은 입력입니다."
     extra_data = dict(user_status='홈', **data)
