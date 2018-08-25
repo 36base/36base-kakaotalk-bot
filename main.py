@@ -181,7 +181,7 @@ def rank_poll(data):
         msg = rp.msg_rank_poll
     extra_data = dict(user_status='홈', **data)
     logger.info(msg, extra=extra_data)
-    return Text(msg) + Keyboard(type="text")
+    return Text(msg) + rp.bt_info + Keyboard(type="text")
 
 
 @chatter.rule(action="*", src="랭킹 집계", dest="홈")

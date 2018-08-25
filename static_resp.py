@@ -13,25 +13,27 @@ msg_search_equip = (
     '예시) 110 또는 0505'
 )
 msg_calc_report = (
-    '작전보고서 계산기입니다\n'
-    '(현재 레벨) (목표 레벨) [현재 경험치] [서약] [요정] '
-    '순서로 입력하면 됩니다. 띄어쓰기 또는 쉼표로 구분합니다.\n'
-    '서약 여부는 "서약" 또는 "ㅅㅇ" 이라고 쓰면 됩니다.\n'
-    '화력소대 특수작전보고서 계산은 맨 뒤에 "화력" 또는 "ㅎㄹ"을 붙이면 됩니다. '
-    '화력 또는 ㅎㄹ 뒤에 띄어쓰지 않고 본인의 훈련소 레벨을 입력할 수도 있습니다. 기본은 10렙입니다.'
+    '작전보고서 계산기 입력을 시작합니다.\n'
+    '입력 양식:\n'
+    '(현재 레벨) (목표 레벨) [현재 경험치] [서약] [요정] [화력[대규모 훈련장 레벨]]\n\n'
+    '자세한 사용법은 아래 링크를 참조해주세요.'
 )
 msg_calc_support = "군수지원 계산기 바로가기"
 msg_go_to_36db = "36베이스 바로가기"
 msg_rank_poll = (
-    "한국서버 [난류연속] 히든전역 [돌풍구출] 랭킹 입력을 시작합니다.\n"
-    "(점수) (퍼센트) [등수] [코멘트] "
-    "순서로 입력해주세요. 100위 이내는 0퍼센트로 작성한 후 별도 등수를 입력하면 됩니다. "
-    "코멘트의 경우 사용 제대 수, 제대 구성 등을 적어주시면 됩니다. 코멘트는 반드시 엔터를 한번 누르고 작성해주세요.\n\n"
+    "한국서버 <난류연속> 히든전역 <돌풍구출> 랭킹 정보 입력을 시작합니다.\n"
+    "입력 양식:\n"
+    "(점수) (퍼센트) [등수] [코멘트]\n\n"
     "예시:\n"
     "123456 78퍼\n"
-    "777777 0 10등\n  2제대 2더미 2공수"
+    "777777 0 10등 2제대 2더미 2공수\n\n"
+    "자세한 사용법은 아래 링크를 참조해주세요."
 )
 
+bt_info = MessageButton(
+    label="기능별 상세 사용설명서 바로가기",
+    url="http://pf.kakao.com/_MaxmXC/27228298"
+)
 bt_calc_sp = MessageButton(
     label="여기를 눌러주세요",
     url="https://tempkaridc.github.io/gf/"
@@ -41,9 +43,9 @@ bt_36db = MessageButton(
     url="https://girlsfrontline.kr/"
 )
 
-search_doll = Text(msg_search_doll) + Keyboard(type="text")
-search_equip = Text(msg_search_equip) + Keyboard(type="text")
-calc_report = Text(msg_calc_report) + Keyboard(type="text")
+search_doll = Text(msg_search_doll) + bt_info + Keyboard(type="text")
+search_equip = Text(msg_search_equip) + bt_info + Keyboard(type="text")
+calc_report = Text(msg_calc_report) + bt_info + Keyboard(type="text")
 calc_support = Text(msg_calc_support) + bt_calc_sp
 go_to_36db = Text(msg_go_to_36db) + bt_36db
 # rank_poll = Text(msg_rank_poll) + Keyboard(type="text")
