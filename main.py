@@ -189,9 +189,9 @@ def rank_poll_input(data):
     re_match = re_rank_poll.match(data["content"].strip())
     if re_match:
         score, percent, _, ranking, comment = re_match.groups()
-        ranking = int(ranking) if ranking else None
+        ranking = int(ranking) if ranking else 0
         rank.log(data['user_key'], int(score), int(percent), ranking, comment)
-        msg = "등록이 완료되었습니다. 감사합니다."
+        msg = "{0}점 {1}%로 등록이 완료되었습니다. 감사합니다.".format(score, percent)
     else:
         msg = (
             "올바른 포맷으로 입력해주세요. "
