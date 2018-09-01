@@ -194,6 +194,7 @@ def rank_poll_input(data):
             if int(percent) == 0:
                 msg = "{0}점 {1}등으로 등록 완료했습니다. 감사합니다.".format(score, ranking)
             else:
+                percent = 0
                 msg = "{0}점 {1}등으로 등록 완료했습니다. 100위 이내는 0퍼센트로 적어주세요.".format(score, ranking)
         else:
             msg = "{0}점 {1}%로 등록 완료했습니다. 감사합니다.".format(score, percent)
