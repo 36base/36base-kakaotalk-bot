@@ -1,5 +1,9 @@
 import datetime
+import json
 
+
+config = json.load(open("config.json", "r", encoding='utf-8'))["ranking"]
+rk_update_time = config["ranking_update_time"]
 
 ins_sql = (
     "INSERT INTO ranking"
@@ -21,7 +25,7 @@ upd_sql = (
 
 
 def date_today(date):
-    cur_date = datetime.datetime.now() - datetime.timedelta(hours=6)
+    cur_date = datetime.datetime.now() - datetime.timedelta(hours=rk_update_time)
     if date == cur_date.date():
         return True
     else:
@@ -34,7 +38,7 @@ class EventRankPoll():
         self.cur = self.conn.cursor()
 
     def log(self, key, score, per=0, ranking=0, comment=None):
-        date = datetime.datetime.now() - datetime.timedelta(hours=6)
+        date = datetime.datetime.now() - datetime.timedelta(hours=rk_update_time)
         if isinstance(comment, str):
             comment = comment.strip()
 
@@ -62,15 +66,4 @@ class EventRankPoll():
 
 
 if __name__ == "__main__":
-    config = {
-        "host": "192.168.99.100",
-        "user": "root",
-        "password": "password",
-        "db": "36base",
-        "charset": "utf8"
-    }
-    import pymysql
-    conn = pymysql.connect(**config)
-    rank = EventRankPoll(conn)
-    rank.log("testusertest", 12456, 12)
     pass
