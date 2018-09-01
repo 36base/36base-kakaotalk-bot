@@ -36,7 +36,7 @@ re_build_time = re.compile(r"^([0-9]{1,2})?[ :]?([0-5][0-9])$")
 re_rp_calc = re.compile(
     r"([0-9]{1,3})[ ,.]([0-9]{1,3})[ ,.]?([0-9]+)?[ ,.]?(서약|ㅅㅇ)?[ ,.]?(요정|ㅇㅈ)?([화ㅎ][력ㄹ]([1]?[0-9])?)?"
 )
-re_rank_poll = re.compile(r"([0-9]{0,6})[점]?[ .,]([0-9]{1,3})(퍼센트|퍼|%)?[ .,]?([0-9]{1,3})?[등]?[\n ]?(.+)?$")
+re_rank_poll = re.compile(r"([0-9]{0,6})[점]? ([0-9]{1,3})(퍼센트 |퍼 |% | )?([0-9]{1,3}(?= |등 ))?( |등 )?(.+?)?$")
 
 # RankingPoll
 rank = EventRankPoll(conn)
@@ -188,13 +188,16 @@ def rank_poll(data):
 def rank_poll_input(data):
     re_match = re_rank_poll.match(data["content"].strip())
     if re_match:
-        score, percent, _, ranking, comment = re_match.groups()
+        score, percent, _, ranking, _, comment = re_match.groups()
         ranking = int(ranking) if ranking else 0
-        rank.log(data['user_key'], int(score), int(percent), ranking, comment)
-        if int(percent) == 0:
-            msg = "{0}점 {1}등으로 등록이 완료되었습니다. 감사합니다.".format(score, ranking)
+        if ranking > 0:
+            if int(percent) == 0:
+                msg = "{0}점 {1}등으로 등록 완료했습니다. 감사합니다.".format(score, ranking)
+            else:
+                msg = "{0}점 {1}등으로 등록 완료했습니다. 100위 이내는 0퍼센트로 적어주세요.".format(score, ranking)
         else:
-            msg = "{0}점 {1}%로 등록이 완료되었습니다. 감사합니다.".format(score, percent)
+            msg = "{0}점 {1}%로 등록 완료했습니다. 감사합니다.".format(score, percent)
+        rank.log(data['user_key'], int(score), int(percent), ranking, comment)
     else:
         msg = (
             "올바른 포맷으로 입력해주세요. "
