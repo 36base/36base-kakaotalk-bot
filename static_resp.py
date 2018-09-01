@@ -26,12 +26,13 @@ msg_rank_poll = (
     "(점수) (퍼센트) [등수] [코멘트]\n\n"
     "예시:\n"
     "123456 78퍼\n"
-    "777777 0 10등 2제대 2더미 2공수\n\n"
+    "777777 0% 10등 4제대\n\n"
+    "100위 이내일 경우 퍼센트는 0을 입력해주세요.\n"
     "자세한 사용법은 아래 링크를 참조해주세요."
 )
 
 bt_info = MessageButton(
-    label="기능별 상세 사용설명서 바로가기",
+    label="사용설명 바로가기",
     url="http://pf.kakao.com/_MaxmXC/27228298"
 )
 bt_calc_sp = MessageButton(
