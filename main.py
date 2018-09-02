@@ -137,8 +137,10 @@ def calc_report_return(data):
         is_fairy = True if is_fairy else False
         hoc = True if hoc else False
         hoc_lv = int(hoc_lv) if hoc_lv else 10
-        if cur_lv >= tar_lv or tar_lv > 120 or (tar_lv > 100 and (is_fairy or hoc)):
-            msg = '올바르지 않은 입력값입니다.'
+        if cur_lv >= tar_lv or tar_lv > 120:
+            msg = '목표 레벨이 현재 레벨보다 낮거나 120을 넘습니다. 올바른 수치를 입력해주세요.'
+        elif tar_lv > 100 and (is_fairy or hoc):
+            msg = '요정 및 화력제대는 100레벨 이상의 계산을 지원하지 않습니다.'
         else:
             if hoc:
                 hoc_lv = 10 if hoc_lv > 10 or hoc_lv < 0 else hoc_lv
