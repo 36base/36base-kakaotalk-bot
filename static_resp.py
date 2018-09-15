@@ -47,6 +47,10 @@ bt_36db = MessageButton(
     label="여기를 눌러주세요",
     url="https://girlsfrontline.kr/"
 )
+bt_ranking_result = MessageButton(
+    label="랭킹 그래프 보기",
+    url="https://github.com/krepe-suZette/gfl-event-ranking/blob/master/docs/Home.md"
+)
 
 search_doll = Text(msg_search_doll) + bt_info + Keyboard(type="text")
 search_equip = Text(msg_search_equip) + bt_info + Keyboard(type="text")

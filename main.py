@@ -208,7 +208,7 @@ def rank_poll_input(data):
         )
     extra_data = dict(user_status='랭킹 집계', **data)
     logger.info(msg, extra=extra_data)
-    return Text(msg) + chatter.home()
+    return Text(msg) + rp.bt_ranking_result + chatter.home()
 
 
 # ##################
