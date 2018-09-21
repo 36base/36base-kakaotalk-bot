@@ -4,6 +4,7 @@ import json
 
 config = json.load(open("config.json", "r", encoding='utf-8'))["ranking"]
 rk_update_time = config["ranking_update_time"]
+rk_expire_time = datetime.datetime.strptime(config["expire_time"], "%Y-%m-%d %H:%M")
 
 ins_sql = (
     "INSERT INTO ranking"
@@ -25,7 +26,11 @@ upd_sql = (
 
 
 def date_today(date):
-    cur_date = datetime.datetime.now() - datetime.timedelta(hours=rk_update_time)
+    if datetime.datetime.now() > rk_expire_time:
+        cur_date = rk_expire_time
+    else:
+        cur_date = datetime.datetime.now() - datetime.timedelta(hours=rk_update_time)
+
     if date == cur_date.date():
         return True
     else:
