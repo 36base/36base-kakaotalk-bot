@@ -211,6 +211,14 @@ def rank_poll_input(data):
     return Text(msg) + rp.bt_ranking_result + chatter.home()
 
 
+@chatter.rule(action='돌아가기', src='*', dest='홈')
+def cancel(data):
+    msg = '기본 화면으로 돌아갑니다.'
+    extra_data = dict(user_status='*', **data)
+    logger.info(msg, extra=extra_data)
+    return Text(msg) + chatter.home()
+
+
 # ##################
 # Flask Func
 
