@@ -48,7 +48,7 @@ rank = EventRankPoll(conn)
 # 초기 화면 설정
 @chatter.base(name='홈')
 def home_keyboard():
-    home_buttons = ['인형 검색', '장비 검색', '작전보고서 계산', '군수지원 계산기', '36베이스 바로가기', '랭킹 집계']
+    home_buttons = ['인형 검색', '장비 검색', '작전보고서 계산', '군수지원 계산기', '36베이스 바로가기']
     return Keyboard(home_buttons)
 
 
