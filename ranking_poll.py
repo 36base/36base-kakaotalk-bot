@@ -43,7 +43,11 @@ class EventRankPoll():
         self.cur = self.conn.cursor()
 
     def log(self, key, score, per=0, ranking=0, comment=None):
-        date = datetime.datetime.now() - datetime.timedelta(hours=rk_update_time)
+        if datetime.datetime.now() > rk_expire_time:
+            date = rk_expire_time
+        else:
+            date = datetime.datetime.now() - datetime.timedelta(hours=rk_update_time)
+
         if isinstance(comment, str):
             comment = comment.strip()
 
