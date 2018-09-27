@@ -13,7 +13,7 @@ import static_resp as rp
 application = Flask(__name__)
 
 chatter = Chatter(memory='dict',
-                  frequency=20,
+                  frequency=10,
                   fallback=True)
 
 with open("config.json", "r", encoding="utf-8") as f:
@@ -221,7 +221,7 @@ def start_free_input(data):
     return rp.start_free_input + Keyboard(type="text")
 
 
-@chatter.rule(action="*", src="자유 입력", dest="자유 입력")
+@chatter.rule(action="*", src="자유 입력")
 def free_input(data):
     res = core.find_nickname(data["content"].strip(), "ko-KR")
     if res:
@@ -231,6 +231,8 @@ def free_input(data):
         else:
             msg = Text("무엇을 찾으셨나요?")
             adv = Keyboard(buttons=res)
+    elif data['content'] == '돌아가기':
+        return cancel(data)
     else:
         msg = Text("잘 모르겠습니다. 다시 입력해주세요.")
         adv = Keyboard(type="text")
