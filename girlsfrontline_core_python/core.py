@@ -195,7 +195,7 @@ class Core:
         elif len(alias) is 1:
             data = self.get_value(alias[0])
             ret = self.l10n(lang, alias[0][0], data)
-            return ret
+            return alias[0][0], ret
         else:
             data = self.get_names(alias)
             return data

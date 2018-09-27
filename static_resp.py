@@ -29,11 +29,20 @@ msg_rank_poll = (
     "123456 78퍼\n"
     "777777 10등 4제대\n\n"
     "퍼센트 또는 등수는 별도 식별문자(~등, ~퍼센트)를 입력하지 않으면 퍼센트로 인식합니다.\n"
-    "자세한 사용법은 아래 링크를 참조해주세요."
+    "자세한 사용법은 아래의 글을 참조해주세요."
 )
 msg_rank_poll_err = (
     "잘못된 입력값입니다. 퍼센트 또는 등수는 1~100사이 숫자로 입력해주세요."
 )
+msg_start_free_input = (
+    "자유롭게 입력해주세요. 현재 별명으로 인형/장비/요정 검색이 구현되어 있습니다.\n"
+    "자세한 내용은 아래의 글을 참조해주세요."
+)
+f_msg_free_input_info = {
+    "doll": "인형 정보\n\n{name}: {rank}성 {Type}\n제조시간: {build_time}",
+    "equip": "장비 정보\n\n{name}: {rank}성 {category_name}\n제조시간: {build_time}",
+    "fairy": "요정 정보\n\n{name}\n제조시간: {build_time}"
+}
 
 bt_info = MessageButton(
     label="사용설명 바로가기",
@@ -51,10 +60,15 @@ bt_ranking_result = MessageButton(
     label="랭킹 그래프 보기",
     url="https://github.com/krepe-suZette/gfl-event-ranking/blob/master/docs/Home.md"
 )
+bt_start_free_input = MessageButton(
+    label="여기를 눌러주세요",
+    url="http://pf.kakao.com/_MaxmXC/29180221"
+)
 
 search_doll = Text(msg_search_doll) + bt_info + Keyboard(type="text")
 search_equip = Text(msg_search_equip) + bt_info + Keyboard(type="text")
 calc_report = Text(msg_calc_report) + bt_info + Keyboard(type="text")
 calc_support = Text(msg_calc_support) + bt_calc_sp
 go_to_36db = Text(msg_go_to_36db) + bt_36db
+start_free_input = Text(msg_start_free_input) + bt_start_free_input
 # rank_poll = Text(msg_rank_poll) + Keyboard(type="text")

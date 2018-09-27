@@ -51,7 +51,7 @@ core = gfl_core.core.Core(cf['gfl_core']['dir'])
 # 초기 화면 설정
 @chatter.base(name='홈')
 def home_keyboard():
-    home_buttons = ['인형 검색', '장비 검색', '작전보고서 계산', '군수지원 계산기', '36베이스 바로가기']
+    home_buttons = ['인형 검색', '장비 검색', '작전보고서 계산', '군수지원 계산기', '36베이스 바로가기', '자유 입력']
     return Keyboard(home_buttons)
 
 
@@ -212,6 +212,31 @@ def rank_poll_input(data):
     extra_data = dict(user_status='랭킹 집계', **data)
     logger.info(msg, extra=extra_data)
     return Text(msg) + rp.bt_ranking_result + chatter.home()
+
+
+@chatter.rule(action="자유 입력", src="홈", dest="자유 입력")
+def start_free_input(data):
+    extra_data = dict(user_status='홈', **data)
+    logger.info(rp.msg_start_free_input, extra=extra_data)
+    return rp.start_free_input + Keyboard(type="text")
+
+
+@chatter.rule(action="*", src="자유 입력", dest="자유 입력")
+def free_input(data):
+    res = core.find_nickname(data["content"].strip(), "ko-KR")
+    if res:
+        if isinstance(res, tuple):
+            msg = Text(rp.f_msg_free_input_info[res[0]].format(**res[1])) + MessageButton("상세 정보", res[1]['link'])
+            adv = Keyboard(type="text")
+        else:
+            msg = Text("무엇을 찾으셨나요?")
+            adv = Keyboard(buttons=res)
+    else:
+        msg = Text("잘 모르겠습니다. 다시 입력해주세요.")
+        adv = Keyboard(type="text")
+    extra_data = dict(user_status='자유 입력', **data)
+    logger.info(msg['message']['text'], extra=extra_data)
+    return msg + adv
 
 
 @chatter.rule(action='돌아가기', src='*', dest='홈')
