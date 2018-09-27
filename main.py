@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 from chatterbox import *
-import girlsfrontline_core_python as GFLCore
+import girlsfrontline_core_python as gfl_core
 import re
 import logging
 import json
@@ -41,6 +41,9 @@ re_rank_poll = re.compile(r"([0-9]{0,6})[점]? ([0-9]{1,3})(퍼센트|퍼|%|등|
 # RankingPoll
 rank = EventRankPoll(conn)
 
+# girlsfrontline_core_python
+core = gfl_core.core.Core(cf['gfl_core']['dir'])
+
 
 # Chatterbox
 
@@ -73,8 +76,9 @@ def searched_doll(data):
     if re_match:
         b_hour, b_min = re_match.groups(default='0')
         build_time = int(b_hour) * 3600 + int(b_min) * 60
-        searched = GFLCore.doll_find_all(buildTime=build_time)
-        dolls = ["{0}: {1}성 {2}".format(n.get('krName', n['name']), n['rank'], n['type'].upper()) for n in searched]
+        # searched(dict): 코어에서 나온 객체들
+        searched = [core.l10n("ko-KR", "doll", n) for n in core.doll.build_time.get(build_time, {})]
+        dolls = ["{name}: {rank}성 {Type}".format(**n) for n in searched]
         if dolls and build_time > 0:
             msg = "찾은 인형 목록:\n{0}".format("\n".join(dolls))
         else:
@@ -100,12 +104,11 @@ def searched_equip(data):
         b_hour, b_min = re_match.groups('0')
         build_time = int(b_hour) * 3600 + int(b_min) * 60
         if build_time < 3600:
-            searched = GFLCore.equip_find_all(buildTime=build_time)
-            equips = ["{0}: {1}성 {2}".format(n.get('krName', n['name']), n['rank'], GFLCore.GFLCore.eq_nm[n["type"]])
-                      for n in searched]
+            searched = [core.l10n("ko-KR", "equip", n) for n in core.equip.build_time.get(build_time, {})]
+            equips = ["{name}: {rank}성 {category_name}".format(**n) for n in searched]
         else:
-            searched = GFLCore.fairy_find_all(buildTime=build_time)
-            equips = ["{0}".format(n.get('krName', n['name'])) for n in searched]
+            searched = [core.l10n("ko-KR", "fairy", n) for n in core.fairy.build_time.get(build_time, {})]
+            equips = ["{name}".format(**n) for n in searched]
 
         if equips and build_time > 0:
             msg = "찾은 장비/요정 목록:\n{0}".format("\n".join(equips))
@@ -145,10 +148,10 @@ def calc_report_return(data):
             if hoc:
                 hoc_lv = 10 if hoc_lv > 10 or hoc_lv < 0 else hoc_lv
                 tar_lv = 100 if tar_lv > 100 else tar_lv
-                rp, hr = GFLCore.calc_exp_hoc(cur_lv, tar_lv, cur_xp, hoc_lv)
+                rp, hr = gfl_core.calc.exp_hoc(cur_lv, tar_lv, cur_xp, hoc_lv)
                 msg = '필요 특수 작전 보고서: {0}개\n소모시간: {1}시간\n소모 전지량: {2}개'.format(rp, hr, hr * 5)
             else:
-                rp = GFLCore.calc_exp(int(cur_lv), int(tar_lv), int(cur_xp), is_oath, is_fairy)
+                rp = gfl_core.calc.exp(int(cur_lv), int(tar_lv), int(cur_xp), is_oath, is_fairy)
                 msg = '필요 작전 보고서: {0}개'.format(rp)
     else:
         msg = "올바르지 않은 입력입니다."
