@@ -2,8 +2,7 @@ import json
 import math
 
 
-_exp_doll, _exp_hoc = json.load(open("./data/exp.json", "r")).values()
-_exp_fairy = [n * 3 for n in _exp_doll]
+_exp_doll, _exp_fairy, _exp_hoc = json.load(open("./data/exp.json", "r")).values()
 _exp_hoc_hr = [1, 3, 3, 5, 7, 7, 9, 11, 11, 13, 15]
 
 

@@ -14,7 +14,7 @@ application = Flask(__name__)
 
 chatter = Chatter(memory='dict',
                   frequency=10,
-                  fallback=True)
+                  fallback=False)
 
 with open("config.json", "r", encoding="utf-8") as f:
     cf = json.load(f)
@@ -253,7 +253,7 @@ def free_input(data):
     return msg + adv
 
 
-@chatter.rule(action='돌아가기', src='*', dest='홈')
+@chatter.rule(dest='홈')
 def cancel(data):
     msg = '기본 화면으로 돌아갑니다.'
     extra_data = dict(user_status='*', **data)
