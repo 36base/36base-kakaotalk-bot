@@ -222,6 +222,20 @@ def start_free_input(data):
 
 
 @chatter.rule(action="*", src="자유 입력")
+def free_input_check(data):
+    if data['content'] in {'돌아가기', '취소'}:
+        return cancel(data)
+    elif data['content'][:2] in {'ㅇㅎ', '인형', '제조'}:
+        data['content'] = data['content'][2:]
+        return searched_doll(data)
+    elif data['content'][:2] in {'ㅈㅂ', '장비'}:
+        data['content'] = data['content'][2:]
+        return searched_equip(data)
+    else:
+        return free_input(data)
+
+
+@chatter.rule(dest="자유 입력")
 def free_input(data):
     res = core.find_nickname(data["content"].strip(), "ko-KR")
     if res:
@@ -231,8 +245,6 @@ def free_input(data):
         else:
             msg = Text("무엇을 찾으셨나요?")
             adv = Keyboard(buttons=res)
-    elif data['content'] == '돌아가기':
-        return cancel(data)
     else:
         msg = Text("잘 모르겠습니다. 다시 입력해주세요.")
         adv = Keyboard(type="text")

@@ -39,9 +39,9 @@ msg_start_free_input = (
     "자세한 내용은 아래의 글을 참조해주세요. 메인으로 돌아가려면 '돌아가기'를 입력해주세요."
 )
 f_msg_free_input_info = {
-    "doll": "< 인형 정보 >\n\n{name}: {rank}성 {Type}\n제조시간: {build_time}",
-    "equip": "< 장비 정보 >\n\n{name}: {rank}성 {category_name}\n제조시간: {build_time}",
-    "fairy": "< 요정 정보 >\n\n{name}\n제조시간: {build_time}"
+    "doll": "< 인형 정보 >\n{name}: {rank}성 {Type}\n제조시간: {build_time}",
+    "equip": "< 장비 정보 >\n{name}: {rank}성 {category_name}\n제조시간: {build_time}\n\n{info}",
+    "fairy": "< 요정 정보 >\n{name}\n제조시간: {build_time}\n\n{desc}\n{info}"
 }
 
 bt_info = MessageButton(

@@ -5,10 +5,11 @@ import glob
 
 __all__ = ["Doll", "Equip", "Fairy", "Core"]
 G36DB_ROOT = "https://girlsfrontline.kr/"
+COMPANY_OK = {"BM", "EOT", "AMP", "IOP", "PMC", "AC", "ILM"}
 
 
 def _make_dict(data: list, key: str, mode='', remove_special=False) -> dict:
-    company_ok = {"BM", "EOT", "AMP", "IOP", "PMC", "AC", "ILM"}
+
     ret = {}
     # data(list): 전체 인형 데이터 리스트
     # obj(dict): 인형/장비/요정 객체
@@ -16,7 +17,7 @@ def _make_dict(data: list, key: str, mode='', remove_special=False) -> dict:
         if remove_special:
             if mode == "doll" and (1 not in obj['obtain'] and 2 not in obj['obtain']):
                 continue
-            elif mode == "equip" and (obj['company'] not in company_ok or obj.get('fitGuns')):
+            elif mode == "equip" and (obj['company'] not in COMPANY_OK or obj.get('fitGuns')):
                 continue
             elif mode == "fairy" and (obj["id"] > 1000 or obj['qualityExp'][4] < 1000):
                 continue
@@ -167,23 +168,38 @@ class Core:
         """언어랑, 데이터 종류랑, 데이터 받아서 쓰기 편한 몇몇개 데이터들 추가.
         """
         if data_type == 'doll':
+            if 1 in data['obtain'] or 2 in data['obtain']:
+                build_time = f"{data['buildTime'] // 3600:0>2}:{data['buildTime'] // 60 % 60:0>2}"
+            else:
+                build_time = "제조 불가능"
             extra = dict(
                 Type=data['type'].upper(),
                 name=self.i18n.gun(lang, data['id'], 1, data['codename']),
-                build_time=f"{data['buildTime'] // 3600:0>2}:{data['buildTime'] // 60 % 60:0>2}",
+                build_time=build_time,
                 link=f"{G36DB_ROOT}doll/{data['id']}"
             )
         elif data_type == 'equip':
+            if data['company'] in COMPANY_OK and not data.get('fitGuns'):
+                build_time = f"{data['buildTime'] // 3600:0>2}:{data['buildTime'] // 60 % 60:0>2}"
+            else:
+                build_time = "제조 불가능"
             extra = dict(
                 name=self.i18n.equip(lang, data['id'], 1, data['codename']),
-                build_time=f"{data['buildTime'] // 3600:0>2}:{data['buildTime'] // 60 % 60:0>2}",
+                build_time=build_time,
                 category_name=f"{self.eq_nm[data['type']]}",
+                info=f"{self.i18n.equip(lang, data['id'], 3)}",
                 link=f"{G36DB_ROOT}equip#{data['id']}"
             )
         elif data_type == 'fairy':
+            if data["id"] < 1000 and data['qualityExp'][4] > 1000:
+                build_time = f"{data['buildTime'] // 3600:0>2}:{data['buildTime'] // 60 % 60:0>2}"
+            else:
+                build_time = "제조 불가능"
             extra = dict(
                 name=self.i18n.fairy(lang, data['id'], 1, data['codename']),
-                build_time=f"{data['buildTime'] // 3600:0>2}:{data['buildTime'] // 60 % 60:0>2}",
+                build_time=build_time,
+                desc=f"{self.i18n.fairy(lang, data['id'], 2)}",
+                info=f"{self.i18n.fairy(lang, data['id'], 3)}",
                 link=f"{G36DB_ROOT}fairy/{data['id']}"
             )
         return dict(**data, **extra)
