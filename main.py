@@ -231,6 +231,8 @@ def free_input_check(data):
     elif data['content'][:2] in {'ㅈㅂ', '장비'}:
         data['content'] = data['content'][2:]
         return searched_equip(data)
+    elif data['type'] == 'photo':
+        return photo_input(data)
     else:
         return free_input(data)
 
@@ -257,10 +259,18 @@ def free_input(data):
     return msg + adv
 
 
+@chatter.rule(dest="홈")
+def photo_input(data):
+    msg = "사진은 아직 지원하지 않습니다."
+    extra_data = dict(user_status='자유 입력', **data)
+    logger.info(msg, extra=extra_data)
+    return Text(msg) + chatter.home()
+
+
 @chatter.rule(dest='홈')
 def cancel(data):
     msg = '기본 화면으로 돌아갑니다.'
-    extra_data = dict(user_status='*', **data)
+    extra_data = dict(user_status='자유 입력', **data)
     logger.info(msg, extra=extra_data)
     return Text(msg) + chatter.home()
 
