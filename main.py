@@ -255,7 +255,7 @@ def free_input(data):
         msg = Text("잘 모르겠습니다. 다시 입력해주세요.")
         adv = Keyboard(type="text")
     extra_data = dict(user_status='자유 입력', **data)
-    logger.info(msg['message']['text'], extra=extra_data)
+    logger.info(msg['message'].get('text', msg['message'].get('photo', {"url": ""})['url']), extra=extra_data)
     return msg + adv
 
 
