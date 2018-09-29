@@ -1,6 +1,7 @@
 import os
 import json
 import glob
+import random
 
 
 __all__ = ["Doll", "Equip", "Fairy", "Core"]
@@ -117,6 +118,7 @@ class Core:
         self.eq_nm = json_eq_nm
 
         self._build_alias()
+        self._special = json.load(open("./data/special.json", "r", encoding="utf-8"))
 
     def _build_alias(self):
         self._alias = {}
@@ -135,13 +137,13 @@ class Core:
             else:
                 # 이름이 없는경우 codename 으로 대체
                 self._alias[self.equip.id[equip_id]["codename"]] = [('equip', equip_id)]
-        # 장비 이름으로 별명 목록 추가
-        for fairy_id in self.equip.id.keys():
+        # 요정 이름으로 별명 목록 추가
+        for fairy_id in self.fairy.id.keys():
             if f"fairy-1{fairy_id:0>7}" in self.i18n.data['ko-KR']:
                 self._alias[self.i18n.data["ko-KR"][f"fairy-1{fairy_id:0>7}"]] = [('fairy', fairy_id)]
             else:
                 # 이름이 없는경우 codename 으로 대체
-                self._alias[self.equip.id[fairy_id]["codename"]] = [('fairy', fairy_id)]
+                self._alias[self.fairy.id[fairy_id]["codename"]] = [('fairy', fairy_id)]
         # alias_type(str): 해당 별명의 종류. doll, equip, fairy
         # item_in_types(dict): 종류별 id: [*alias] 로 구성된 딕셔너리
         for alias_type, item_in_types in json_alias.items():
@@ -215,6 +217,13 @@ class Core:
         else:
             data = self.get_names(alias)
             return data
+
+    def special(self, msg):
+        resp = self._special.get(msg)
+        if resp:
+            return random.choice(resp)
+        else:
+            return
 
 
 def main():

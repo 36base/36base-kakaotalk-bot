@@ -238,6 +238,7 @@ def free_input_check(data):
 @chatter.rule(dest="자유 입력")
 def free_input(data):
     res = core.find_nickname(data["content"].strip(), "ko-KR")
+    res_special = core.special(data["content"].strip())
     if res:
         if isinstance(res, tuple):
             msg = Text(rp.f_msg_free_input_info[res[0]].format(**res[1])) + MessageButton("상세 정보", res[1]['link'])
@@ -245,6 +246,9 @@ def free_input(data):
         else:
             msg = Text("무엇을 찾으셨나요?")
             adv = Keyboard(buttons=res)
+    elif res_special:
+        msg = Message(**res_special)
+        adv = Keyboard(type="text")
     else:
         msg = Text("잘 모르겠습니다. 다시 입력해주세요.")
         adv = Keyboard(type="text")

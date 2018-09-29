@@ -111,3 +111,4 @@ venv.bak/
 
 # config
 config.json
+data/special.json
