@@ -79,7 +79,10 @@ class Internationalization():
                 self.data[lang].update(json.load(open(file_dir, "r", encoding="utf-8")))
 
     def gun(self, lang, gun_id, num, default=''):
-        return self.data[lang].get(f"gun-{num}{gun_id:0>7}", default)
+        if gun_id < 20000:
+            return self.data[lang].get(f"gun-{num}{gun_id:0>7}", default)
+        else:
+            return self.data[lang].get(f"gun-{num}{gun_id:0>7}", default) + "Mod"
 
     def equip(self, lang, equip_id, num, default=''):
         return self.data[lang].get(f"equip-{num}{equip_id:0>7}", default)
@@ -126,7 +129,12 @@ class Core:
         # 인형 이름으로 별명 만들기
         for doll_id in self.doll.id.keys():
             if f"gun-1{doll_id:0>7}" in self.i18n.data['ko-KR']:
-                self._alias[self.i18n.data["ko-KR"][f"gun-1{doll_id:0>7}"]] = [('doll', doll_id)]
+                if doll_id < 20000:
+                    # 개조가 아닌 인형들
+                    self._alias[self.i18n.data["ko-KR"][f"gun-1{doll_id:0>7}"]] = [('doll', doll_id)]
+                else:
+                    # 개조 인형들. (개조)를 뒤에 붙여 구분 가능하게 변경.
+                    self._alias[f"{self.i18n.data['ko-KR'][f'gun-1{doll_id:0>7}']}Mod"] = [('doll', doll_id)]
             else:
                 # 이름이 없는경우 codename 으로 대체
                 self._alias[self.doll.id[doll_id]["codename"]] = [('doll', doll_id)]
@@ -160,7 +168,7 @@ class Core:
         return
 
     def get_names(self, items: list):
-        return [self.i18n.all("ko-KR", item[0], self.get_value(item)["id"]) for item in items]
+        return [self.i18n.all("ko-KR", item[0], item[1]) for item in items]
 
     def get_value(self, item: tuple) -> dict:
         info_type, info_id = item
@@ -190,7 +198,7 @@ class Core:
                 build_time=build_time,
                 category_name=f"{self.eq_nm[data['type']]}",
                 info=f"{self.i18n.equip(lang, data['id'], 3)}",
-                link=f"{G36DB_ROOT}equip#{data['id']}"
+                link=f"{G36DB_ROOT}equip/{data['id']}"
             )
         elif data_type == 'fairy':
             if data["id"] < 1000 and data['qualityExp'][4] > 1000:
