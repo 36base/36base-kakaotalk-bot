@@ -78,11 +78,11 @@ class Internationalization():
             for file_dir in file_list:
                 self.data[lang].update(json.load(open(file_dir, "r", encoding="utf-8")))
 
-    def gun(self, lang, gun_id, num, default=''):
-        if gun_id < 20000:
-            return self.data[lang].get(f"gun-{num}{gun_id:0>7}", default)
-        else:
+    def gun(self, lang, gun_id, num, default='', mod=False):
+        if gun_id > 20000 and mod:
             return self.data[lang].get(f"gun-{num}{gun_id:0>7}", default) + "Mod"
+        else:
+            return self.data[lang].get(f"gun-{num}{gun_id:0>7}", default)
 
     def equip(self, lang, equip_id, num, default=''):
         return self.data[lang].get(f"equip-{num}{equip_id:0>7}", default)
@@ -90,9 +90,9 @@ class Internationalization():
     def fairy(self, lang, fairy_id, num, default=''):
         return self.data[lang].get(f"fairy-{num}{fairy_id:0>7}", default)
 
-    def all(self, lang, o_type, o_id, num=1, default=''):
+    def all(self, lang, o_type, o_id, num=1, default='', mod=False):
         if o_type == 'doll':
-            return self.gun(lang, o_id, num, default)
+            return self.gun(lang, o_id, num, default, mod)
         elif o_type == 'equip':
             return self.equip(lang, o_id, num, default)
         elif o_type == 'fairy':
@@ -131,27 +131,27 @@ class Core:
             if f"gun-1{doll_id:0>7}" in self.i18n.data['ko-KR']:
                 if doll_id < 20000:
                     # 개조가 아닌 인형들
-                    self._alias[self.i18n.data["ko-KR"][f"gun-1{doll_id:0>7}"]] = [('doll', doll_id)]
+                    self._alias[self.i18n.data["ko-KR"][f"gun-1{doll_id:0>7}"].lower()] = [('doll', doll_id)]
                 else:
-                    # 개조 인형들. (개조)를 뒤에 붙여 구분 가능하게 변경.
-                    self._alias[f"{self.i18n.data['ko-KR'][f'gun-1{doll_id:0>7}']}Mod"] = [('doll', doll_id)]
+                    # 개조 인형들. Mod 를 뒤에 붙여 구분 가능하게 변경.
+                    self._alias[f"{self.i18n.data['ko-KR'][f'gun-1{doll_id:0>7}']}Mod".lower()] = [('doll', doll_id)]
             else:
                 # 이름이 없는경우 codename 으로 대체
-                self._alias[self.doll.id[doll_id]["codename"]] = [('doll', doll_id)]
+                self._alias[self.doll.id[doll_id]["codename"].lower()] = [('doll', doll_id)]
         # 장비 이름으로 별명 목록 추가
         for equip_id in self.equip.id.keys():
             if f"equip-1{equip_id:0>7}" in self.i18n.data['ko-KR']:
-                self._alias[self.i18n.data["ko-KR"][f"equip-1{equip_id:0>7}"]] = [('equip', equip_id)]
+                self._alias[self.i18n.data["ko-KR"][f"equip-1{equip_id:0>7}"].lower()] = [('equip', equip_id)]
             else:
                 # 이름이 없는경우 codename 으로 대체
-                self._alias[self.equip.id[equip_id]["codename"]] = [('equip', equip_id)]
+                self._alias[self.equip.id[equip_id]["codename"].lower()] = [('equip', equip_id)]
         # 요정 이름으로 별명 목록 추가
         for fairy_id in self.fairy.id.keys():
             if f"fairy-1{fairy_id:0>7}" in self.i18n.data['ko-KR']:
-                self._alias[self.i18n.data["ko-KR"][f"fairy-1{fairy_id:0>7}"]] = [('fairy', fairy_id)]
+                self._alias[self.i18n.data["ko-KR"][f"fairy-1{fairy_id:0>7}"].lower()] = [('fairy', fairy_id)]
             else:
                 # 이름이 없는경우 codename 으로 대체
-                self._alias[self.fairy.id[fairy_id]["codename"]] = [('fairy', fairy_id)]
+                self._alias[self.fairy.id[fairy_id]["codename"].lower()] = [('fairy', fairy_id)]
         # alias_type(str): 해당 별명의 종류. doll, equip, fairy
         # item_in_types(dict): 종류별 id: [*alias] 로 구성된 딕셔너리
         for alias_type, item_in_types in json_alias.items():
@@ -162,13 +162,13 @@ class Core:
                 # values: id 별로 대응되는 별명 들어있는 리스트
                 for alias in values:
                     if alias in self._alias:
-                        self._alias[alias].append((alias_type, int(key)))
+                        self._alias[alias.lower()].append((alias_type, int(key)))
                     else:
-                        self._alias[alias] = [(alias_type, int(key))]
+                        self._alias[alias.lower()] = [(alias_type, int(key))]
         return
 
     def get_names(self, items: list):
-        return [self.i18n.all("ko-KR", item[0], item[1]) for item in items]
+        return [self.i18n.all("ko-KR", item[0], item[1], 1, '', True) for item in items]
 
     def get_value(self, item: tuple) -> dict:
         info_type, info_id = item
@@ -215,15 +215,15 @@ class Core:
         return dict(**data, **extra)
 
     def find_nickname(self, alias, lang="ko-KR"):
-        alias = self._alias.get(alias, [])
-        if len(alias) is 0:
+        alias_list = self._alias.get(alias.lower(), [])
+        if len(alias_list) is 0:
             return
-        elif len(alias) is 1:
-            data = self.get_value(alias[0])
-            ret = self.l10n(lang, alias[0][0], data)
-            return alias[0][0], ret
+        elif len(alias_list) is 1:
+            data = self.get_value(alias_list[0])
+            ret = self.l10n(lang, alias_list[0][0], data)
+            return alias_list[0][0], ret
         else:
-            data = self.get_names(alias)
+            data = self.get_names(alias_list)
             return data
 
     def special(self, msg):
