@@ -275,6 +275,13 @@ def cancel(data):
     return Text(msg) + chatter.home()
 
 
+@chatter.rule(action="*", src="홈", dest="홈")
+def fallback(data):
+    extra_data = dict(user_status='홈', **data)
+    logger.info(rp.msg_fallback, extra=extra_data)
+    return rp.fallback + chatter.home()
+
+
 # ##################
 # Flask Func
 

@@ -38,6 +38,7 @@ msg_start_free_input = (
     "자유롭게 입력해주세요. 현재 별명으로 인형/장비/요정 검색이 구현되어 있습니다.\n"
     "자세한 내용은 아래의 글을 참조해주세요. 메인으로 돌아가려면 '돌아가기'를 입력해주세요."
 )
+msg_fallback = "오류가 발생하였습니다. 홈으로 돌아갑니다."
 f_msg_free_input_info = {
     "doll": "< 인형 정보 >\n{name}: {rank}성 {Type}\n제조시간: {build_time}",
     "equip": "< 장비 정보 >\n{name}: {rank}성 {category_name}\n제조시간: {build_time}\n\n{info}",
@@ -71,4 +72,5 @@ calc_report = Text(msg_calc_report) + bt_info + Keyboard(type="text")
 calc_support = Text(msg_calc_support) + bt_calc_sp
 go_to_36db = Text(msg_go_to_36db) + bt_36db
 start_free_input = Text(msg_start_free_input) + bt_start_free_input
+fallback = Text(msg_fallback)
 # rank_poll = Text(msg_rank_poll) + Keyboard(type="text")
