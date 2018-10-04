@@ -12,8 +12,8 @@ import static_resp as rp
 
 application = Flask(__name__)
 
-chatter = Chatter(memory='dict',
-                  frequency=10,
+chatter = Chatter(memory='sqlite',
+                  frequency=5,
                   fallback=False)
 
 with open("config.json", "r", encoding="utf-8") as f:
