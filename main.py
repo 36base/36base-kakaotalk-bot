@@ -244,6 +244,8 @@ def free_input(data):
     if res:
         if isinstance(res, tuple):
             msg = Text(rp.f_msg_free_input_info[res[0]].format(**res[1])) + MessageButton("상세 정보", res[1]['link'])
+            if "photo" in res[1]:
+                msg += Photo(**res[1]["photo"])
             adv = Keyboard(type="text")
         else:
             msg = Text("무엇을 찾으셨나요?")

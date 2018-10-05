@@ -6,6 +6,7 @@ import random
 
 __all__ = ["Doll", "Equip", "Fairy", "Core"]
 G36DB_ROOT = "https://girlsfrontline.kr/"
+IMAGE_REPO = "https://raw.githubusercontent.com/krepe-suZette/dccon/master/"
 COMPANY_OK = {"BM", "EOT", "AMP", "IOP", "PMC", "AC", "ILM"}
 
 
@@ -186,7 +187,8 @@ class Core:
                 Type=data['type'].upper(),
                 name=self.i18n.gun(lang, data['id'], 1, data['codename']),
                 build_time=build_time,
-                link=f"{G36DB_ROOT}doll/{data['id']}"
+                link=f"{G36DB_ROOT}doll/{data['id']}",
+                photo={"url": f"{IMAGE_REPO}_doll/{data['codename']}.jpg", "width": 512, "height": 360}
             )
         elif data_type == 'equip':
             if data['company'] in COMPANY_OK and not data.get('fitGuns'):
