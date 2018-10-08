@@ -51,13 +51,9 @@ core = gfl_core.core.Core(cf['gfl_core']['dir'])
 # 초기 화면 설정
 @chatter.base(name='홈')
 def home_keyboard():
-    home_buttons = ['인형 검색', '장비 검색', '작전보고서 계산', '군수지원 계산기', '36베이스 바로가기', '자유 입력']
-    return Keyboard(home_buttons)
+    return rp.kb_home
 
 
-# 유저의 현재 state가 src이고 input으로 받은 데이터에서 content가 action일 때,
-# func 함수를 실행하고 유저의 state를 dest로 변경합니다.
-# state를 활용하여 1 depth 이상의 자동응답 시나리오를 구성할 수 있습니다.
 # src = 현재 상태(status)
 # action = 유저가 입력한 것
 # dest = 다음 상태(status)
@@ -160,11 +156,27 @@ def calc_report_return(data):
     return Text(msg) + chatter.home()
 
 
-@chatter.rule(action='군수지원 계산기', src='홈', dest='홈')
-def calc_support(data):
+@chatter.rule(action='유용한 정보 모음', src='홈', dest='유용한 정보')
+def useful_info(data):
     extra_data = dict(user_status='홈', **data)
-    logger.info(rp.msg_calc_support, extra=extra_data)
-    return rp.calc_support + chatter.home()
+    logger.info(rp.msg_useful_info, extra=extra_data)
+    return rp.useful_info
+
+
+@chatter.rule(action='*', src='유용한 정보')
+def useful_info_input(data):
+    if data['content'] == '돌아가기':
+        return cancel(data)
+    else:
+        return useful_info_return(data)
+
+
+@chatter.rule(dest="유용한 정보")
+def useful_info_return(data):
+    resp = rp.d_useful_info.get(data['content'], Text("오류 발생"))
+    extra_data = dict(user_status='유용한 정보', **data)
+    logger.info(resp['message']['text'], extra=extra_data)
+    return resp + rp.kb_useful_info
 
 
 @chatter.rule(action='36베이스 바로가기', src='홈', dest='홈')
@@ -272,7 +284,7 @@ def photo_input(data):
 @chatter.rule(dest='홈')
 def cancel(data):
     msg = '기본 화면으로 돌아갑니다.'
-    extra_data = dict(user_status='자유 입력', **data)
+    extra_data = dict(user_status='*', **data)
     logger.info(msg, extra=extra_data)
     return Text(msg) + chatter.home()
 
