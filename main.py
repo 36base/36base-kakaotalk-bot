@@ -9,6 +9,7 @@ import pymysql
 from logging_db import MySQLHandler
 from ranking_poll import EventRankPoll
 import static_resp as rp
+import kakao_vision as kv
 
 application = Flask(__name__)
 
@@ -43,6 +44,8 @@ rank = EventRankPoll(conn)
 
 # girlsfrontline_core_python
 core = gfl_core.core.Core(cf['gfl_core']['dir'])
+
+kv.APP_KEY = cf['kakao_vision']['app_key']
 
 
 # Chatterbox
@@ -273,12 +276,21 @@ def free_input(data):
     return msg + adv
 
 
-@chatter.rule(dest="홈")
+@chatter.rule(dest="자유 입력")
 def photo_input(data):
-    msg = "사진은 아직 지원하지 않습니다."
+    res = kv.detect_adult(data['content'])
+    if res:
+        if res['adult'] > res['soft'] and res['adult'] > res['normal']:
+            msg = f"성인 이미지일 확률이 {res['adult'] * 100:0.01f}% 입니다."
+        elif res['soft'] > res['adult'] and res['soft'] > res['normal']:
+            msg = f"노출이 있는 이미지일 확률이 {res['soft'] * 100:0.01f}% 입니다."
+        else:
+            msg = f"건전한 이미지일 확률이 {res['normal'] * 100:0.01f}% 입니다."
+    else:
+        msg = '오류가 발생하였습니다.'
     extra_data = dict(user_status='자유 입력', **data)
     logger.info(msg, extra=extra_data)
-    return Text(msg) + chatter.home()
+    return Text(msg) + Keyboard(type='text')
 
 
 @chatter.rule(dest='홈')

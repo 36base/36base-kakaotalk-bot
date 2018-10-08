@@ -25,4 +25,4 @@ chatterbox.py
 PyMySQL
 ```
 
-`python 3.5` 이상에서의 정상작동만을 보장합니다.
+`python 3.6` 이상에서의 정상작동만을 보장합니다.
