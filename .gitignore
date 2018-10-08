@@ -112,3 +112,6 @@ venv.bak/
 # config
 config.json
 data/special.json
+
+# image
+image/
