@@ -14,7 +14,7 @@ import kakao_vision as kv
 application = Flask(__name__)
 
 chatter = Chatter(memory='sqlite',
-                  frequency=5,
+                  frequency=10,
                   fallback=False)
 
 with open("config.json", "r", encoding="utf-8") as f:

@@ -1,4 +1,5 @@
 import os
+import datetime
 import requests
 
 
@@ -7,9 +8,11 @@ APP_KEY = ''
 
 
 def _save_image(url):
+    today = datetime.date.today()
     resp = requests.get(url)
     if resp.status_code == 200:
-        with open(f"image/{os.path.split(url)[1]}", "wb") as f:
+        os.makedirs(f"image/{today}", exist_ok=True)
+        with open(f"image/{today}/{os.path.split(url)[1]}", "wb") as f:
             f.write(resp.content)
     return
 

@@ -8,6 +8,7 @@ __all__ = ["Doll", "Equip", "Fairy", "Core"]
 G36DB_ROOT = "https://girlsfrontline.kr/"
 IMAGE_REPO = "https://raw.githubusercontent.com/krepe-suZette/dccon/master/"
 COMPANY_OK = {"BM", "EOT", "AMP", "IOP", "PMC", "AC", "ILM"}
+REFERRER = "utm_source=kakao.com&utm_medium=social&utm_campaign={0}search&utm_content=36basebot&utm_term={1}"
 
 
 def _make_dict(data: list, key: str, mode='', remove_special=False) -> dict:
@@ -187,7 +188,7 @@ class Core:
                 Type=data['type'].upper(),
                 name=self.i18n.gun(lang, data['id'], 1, data['codename']),
                 build_time=build_time,
-                link=f"{G36DB_ROOT}doll/{data['id']}",
+                link=f"{G36DB_ROOT}doll/{data['id']}?{REFERRER.format(data_type, data['id'])}",
                 photo={"url": f"{IMAGE_REPO}_doll/{data['codename']}.jpg", "width": 512, "height": 360}
             )
         elif data_type == 'equip':
@@ -200,7 +201,7 @@ class Core:
                 build_time=build_time,
                 category_name=f"{self.eq_nm[data['type']]}",
                 info=f"{self.i18n.equip(lang, data['id'], 3)}",
-                link=f"{G36DB_ROOT}equip/{data['id']}"
+                link=f"{G36DB_ROOT}equip/{data['id']}?{REFERRER.format(data_type, data['id'])}"
             )
         elif data_type == 'fairy':
             if data["id"] < 1000 and data['qualityExp'][4] > 1000:
@@ -212,7 +213,7 @@ class Core:
                 build_time=build_time,
                 desc=f"{self.i18n.fairy(lang, data['id'], 2)}",
                 info=f"{self.i18n.fairy(lang, data['id'], 3)}",
-                link=f"{G36DB_ROOT}fairy/{data['id']}"
+                link=f"{G36DB_ROOT}fairy/{data['id']}?{REFERRER.format(data_type, data['id'])}"
             )
         return dict(**data, **extra)
 
