@@ -24,6 +24,7 @@ Flask
 chatterbox.py
 PyMySQL
 requests
+emoji
 ```
 
 `python 3.6` 버전에서의 정상작동만을 보장합니다.

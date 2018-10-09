@@ -2,6 +2,7 @@
 # https://gist.github.com/giumas/994e48d3c1cff45fbe93
 import logging
 import time
+import emoji
 
 
 insertion_sql = (
@@ -29,6 +30,7 @@ class MySQLHandler(logging.Handler):
     def emit(self, record):
         self.format(record)
         self.format_time(record)
+        record.content = emoji.demojize(record.content)
         if record.exc_info:  # for exceptions
             record.exc_text = logging._defaultFormatter.formatException(record.exc_info)
         else:
