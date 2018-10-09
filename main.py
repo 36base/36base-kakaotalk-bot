@@ -278,8 +278,9 @@ def free_input(data):
 
 @chatter.rule(dest="자유 입력")
 def photo_input(data):
-    res = kv.detect_adult(data['content'])
-    if res:
+    result = kv.detect_adult(data['content'])
+    if 'result' in result:
+        res = result['result']
         if res['adult'] > res['soft'] and res['adult'] > res['normal']:
             msg = f"성인 이미지일 확률이 {res['adult'] * 100:0.01f}% 입니다."
         elif res['soft'] > res['adult'] and res['soft'] > res['normal']:
@@ -287,7 +288,7 @@ def photo_input(data):
         else:
             msg = f"건전한 이미지일 확률이 {res['normal'] * 100:0.01f}% 입니다."
     else:
-        msg = '오류가 발생하였습니다.'
+        msg = f"오류가 발생하였습니다.\n{result['msg']}"
     extra_data = dict(user_status='자유 입력', **data)
     logger.info(msg, extra=extra_data)
     return Text(msg) + Keyboard(type='text')
