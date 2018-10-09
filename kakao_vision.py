@@ -28,10 +28,11 @@ def detect_adult(image_url):
     _save_image(image_url)
 
     global API_STATUS
-    print(API_STATUS)
+    global API_STATUS_UPDATE
     if datetime.date.today() != API_STATUS_UPDATE:
         API_STATUS = 1
-    elif API_STATUS == 1:
+        API_STATUS_UPDATE = datetime.date.today()
+    elif API_STATUS:
         pass
     else:
         return {'msg': '오늘 최대 이용횟수를 초과했습니다. 내일 다시 시도해주세요.'}
