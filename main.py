@@ -268,6 +268,9 @@ def free_input(data):
     elif res_special:
         msg = Message(**res_special)
         adv = Keyboard(type="text")
+    elif data['content'] == '끝말잇기':
+        msg = Text("끝말잇기를 시작하겠습니다.\n\n새벽녘")
+        adv = Keyboard(['내가 졌다', '항복', '모르겠는걸?'])
     else:
         msg = Text("잘 모르겠습니다. 다시 입력해주세요.")
         adv = Keyboard(type="text")
