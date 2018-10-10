@@ -48,10 +48,6 @@ bt_info = MessageButton(
     label="사용설명 바로가기",
     url="http://pf.kakao.com/_MaxmXC/27228298"
 )
-bt_calc_sp = MessageButton(
-    label="여기를 눌러주세요",
-    url="https://tempkaridc.github.io/gf/"
-)
 bt_36db = MessageButton(
     label="여기를 눌러주세요",
     url="https://girlsfrontline.kr/"
@@ -75,7 +71,7 @@ d_useful_info = {
     ),
     "군수지원 계산기": Message(
         text=Text("자신에게 필요한 군수지원을 추천해주는 홈페이지입니다."),
-        message_button=MessageButton("바로가기", "https://girlsfrontline.kr/")
+        message_button=MessageButton("바로가기", "https://tempkaridc.github.io/gf/")
     ),
     "소녀전선 구글시트": Message(
         text=Text("소녀전선과 관련된 자료들을 많이 모아놓은 구글 시트입니다."),
@@ -94,7 +90,7 @@ d_useful_info = {
         message_button=MessageButton("바로가기", "https://gf.underseaworld.net/")
     ),
     "DPS 시뮬레이터": Message(
-        text=Text("제대의 DPS를 확인할 수 있는 사이트입니다. 하지만 너무 신뢰는 하지 말아주세요."),
+        text=Text("제대의 DPS를 확인할 수 있는 사이트입니다. 하지만 너무 신뢰는 하지 말아주세요.\n\n(36베이스에서 운영하는게 아니기 때문에 업데이트가 불가능한 점 양해 부탁드립니다.)"),
         message_button=MessageButton("바로가기", "https://gf.dck.moe/ynntk4815/gf/main2.html")
     ),
     "소전사전": Message(
