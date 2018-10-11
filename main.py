@@ -168,7 +168,7 @@ def useful_info(data):
 
 @chatter.rule(action='*', src='유용한 정보')
 def useful_info_input(data):
-    if data['content'] == '돌아가기':
+    if data['content'] == '돌아가기' or data['content'] not in rp.d_useful_info:
         return cancel(data)
     else:
         return useful_info_return(data)
