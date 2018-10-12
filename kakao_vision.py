@@ -10,7 +10,7 @@ API_STATUS_UPDATE = datetime.date.today()
 ERROR_MSG = {
     -10: "오늘 최대 이용횟수를 초과했습니다. 내일 다시 시도해주세요.",
     -603: "이미지 로딩 시간초과. 더 작은 크기의 이미지를 사용해주세요.",
-    -911: "지원하지 않는 이미지 포맷입니다."
+    -911: "지원하지 않는 이미지 포맷입니다. jpg와 png만 보내주세요."
 }
 
 
@@ -34,6 +34,8 @@ def detect_adult(image_url):
         API_STATUS_UPDATE = datetime.date.today()
     elif API_STATUS:
         pass
+    elif os.path.splitext(image_url)[1] not in ['png', 'jpg', 'jpeg']:
+        return {'msg': '지원하지 않는 이미지 포맷입니다. jpg와 png만 보내주세요.'}
     else:
         return {'msg': '오늘 최대 이용횟수를 초과했습니다. 내일 다시 시도해주세요.'}
     headers = {'Authorization': f'KakaoAK {APP_KEY}'}

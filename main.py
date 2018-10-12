@@ -17,8 +17,7 @@ chatter = Chatter(memory='sqlite',
                   frequency=10,
                   fallback=False)
 
-with open("config.json", "r", encoding="utf-8") as f:
-    cf = json.load(f)
+cf = json.load(open("config.json", "r", encoding="utf-8"))
 
 # MySQL Connection
 conn = pymysql.connect(**cf["MySQL"])
