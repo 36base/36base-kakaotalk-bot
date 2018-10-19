@@ -217,8 +217,12 @@ class Core:
             )
         return dict(**data, **extra)
 
-    def find_nickname(self, alias, lang="ko-KR"):
-        alias_list = self._alias.get(alias.lower(), [])
+    def find_nickname(self, alias, nick_type="", lang="ko-KR"):
+        if nick_type:
+            alias_list = [n for n in self._alias.get(alias.lower(), []) if n[0] == nick_type]
+        else:
+            alias_list = self._alias.get(alias.lower(), [])
+
         if len(alias_list) is 0:
             return
         elif len(alias_list) is 1:

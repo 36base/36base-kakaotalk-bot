@@ -39,7 +39,7 @@ re_rp_calc = re.compile(
 re_rank_poll = re.compile(r"([0-9]{0,6})[점]? ([0-9]{1,3})(퍼센트|퍼|%|등|)[ ]?(.+)?$")
 
 # RankingPoll
-rank = EventRankPoll(conn)
+# rank = EventRankPoll(conn)
 
 # girlsfrontline_core_python
 core = gfl_core.core.Core(cf['gfl_core']['dir'])
@@ -71,6 +71,7 @@ def search_doll(data):
 @chatter.rule(action='*', src='인형 검색 페이지', dest='홈')
 def searched_doll(data):
     re_match = re_build_time.match(data['content'].strip())
+    res = core.find_nickname(data['content'].strip(), 'doll')
     if re_match:
         b_hour, b_min = re_match.groups(default='0')
         build_time = int(b_hour) * 3600 + int(b_min) * 60
@@ -81,6 +82,15 @@ def searched_doll(data):
             msg = "찾은 인형 목록:\n{0}".format("\n".join(dolls))
         else:
             msg = "검색 결과가 없습니다."
+    elif res:
+        if isinstance(res, tuple):
+            msg = Text(rp.f_msg_free_input_info[res[0]].format(**res[1])) + MessageButton("상세 정보", res[1]['link'])
+            if "photo" in res[1]:
+                msg += Photo(**res[1]["photo"])
+            adv = Keyboard(type="text")
+        else:
+            msg = Text("무엇을 찾으셨나요?")
+            adv = Keyboard(buttons=res)
     else:
         msg = "올바르지 않은 입력입니다."
     extra_data = dict(user_status='인형 검색 페이지', **data)
@@ -253,7 +263,7 @@ def free_input_check(data):
 
 @chatter.rule(dest="자유 입력")
 def free_input(data):
-    res = core.find_nickname(data["content"].strip(), "ko-KR")
+    res = core.find_nickname(data["content"].strip(), "", "ko-KR")
     res_special = core.special(data["content"].strip())
     if res:
         if isinstance(res, tuple):
