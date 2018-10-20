@@ -31,6 +31,8 @@ class MySQLHandler(logging.Handler):
         self.format(record)
         self.format_time(record)
         record.content = emoji.demojize(record.content)
+        if len(record.content) > 255:
+            record.content = record.content[:254]
         if record.exc_info:  # for exceptions
             record.exc_text = logging._defaultFormatter.formatException(record.exc_info)
         else:
