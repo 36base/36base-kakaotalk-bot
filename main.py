@@ -247,7 +247,7 @@ def start_free_input(data):
 
 @chatter.rule(action="*", src="자유 입력")
 def free_input_check(data):
-    if data['content'] in {'돌아가기', '취소', '종료', '잘가', 'ㅂㅂ'}:
+    if data['content'] in {'돌아가기', '취소', '종료', '잘가', 'ㅂㅂ', '꺼져'}:
         return cancel(data)
     elif data['content'][:2] in {'ㅇㅎ', '인형', '제조'}:
         data['content'] = data['content'][2:]
