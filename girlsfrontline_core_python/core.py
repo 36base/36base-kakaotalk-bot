@@ -2,6 +2,7 @@ import os
 import json
 import glob
 import random
+import urllib
 
 
 __all__ = ["Doll", "Equip", "Fairy", "Core"]
@@ -184,12 +185,17 @@ class Core:
                 build_time = f"{data['buildTime'] // 3600:0>2}:{data['buildTime'] // 60 % 60:0>2}"
             else:
                 build_time = "제조 불가능"
+            photo = {
+                "url": f"{IMAGE_REPO}_doll/{urllib.parse.quote(data['codename'])}.jpg",
+                "width": 512,
+                "height": 360
+            }
             extra = dict(
                 Type=data['type'].upper(),
                 name=self.i18n.gun(lang, data['id'], 1, data['codename']),
                 build_time=build_time,
                 link=f"{G36DB_ROOT}doll/{data['id']}?{REFERRER.format(data_type, data['id'])}",
-                photo={"url": f"{IMAGE_REPO}_doll/{data['codename']}.jpg", "width": 512, "height": 360}
+                photo=photo
             )
         elif data_type == 'equip':
             if data['company'] in COMPANY_OK and not data.get('fitGuns'):

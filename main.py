@@ -285,7 +285,7 @@ def free_input(data):
         msg = Text("잘 모르겠습니다. 다시 입력해주세요.")
         msg += MessageButton(
             label="모르는 말 알려주기",
-            url=f"https://kakao-learn.gfl.kr/start?message={urllib.parse.quote_plus(data['content'].strip())}"
+            url=f"https://kakao-learn.gfl.kr/start?message={urllib.parse.quote(data['content'].strip())}"
         )
         adv = Keyboard(type="text")
     extra_data = dict(user_status='자유 입력', **data)
