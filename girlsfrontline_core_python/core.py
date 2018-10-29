@@ -185,6 +185,8 @@ class Core:
                 build_time = f"{data['buildTime'] // 3600:0>2}:{data['buildTime'] // 60 % 60:0>2}"
             else:
                 build_time = "제조 불가능"
+            if data['rank'] == 7:
+                data['rank'] = 5
             photo = {
                 "url": f"{IMAGE_REPO}_doll/{urllib.parse.quote(data['codename'])}.jpg",
                 "width": 512,
