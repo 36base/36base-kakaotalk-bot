@@ -4,6 +4,7 @@ import girlsfrontline_core_python as gfl_core
 import re
 import logging
 import json
+import urllib
 import pymysql
 
 from logging_db import MySQLHandler
@@ -238,7 +239,7 @@ def rank_poll_input(data):
     return Text(msg) + rp.bt_ranking_result + chatter.home()
 
 
-@chatter.rule(action="자유 입력", src="홈", dest="자유 입력")
+@chatter.rule(action="대화하기", src="홈", dest="자유 입력")
 def start_free_input(data):
     extra_data = dict(user_status='홈', **data)
     logger.info(rp.msg_start_free_input, extra=extra_data)
@@ -282,6 +283,10 @@ def free_input(data):
         adv = Keyboard(['내가 졌다', '항복', '모르겠는걸?'])
     else:
         msg = Text("잘 모르겠습니다. 다시 입력해주세요.")
+        msg += MessageButton(
+            label="모르는 말 알려주기",
+            url=f"https://kakao-learn.gfl.kr/start?message={urllib.parse.quote_plus(data['content'].strip())}"
+        )
         adv = Keyboard(type="text")
     extra_data = dict(user_status='자유 입력', **data)
     logger.info(msg['message'].get('text', msg['message'].get('photo', {"url": ""})['url']), extra=extra_data)

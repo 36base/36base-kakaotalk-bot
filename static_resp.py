@@ -61,7 +61,7 @@ bt_start_free_input = MessageButton(
     url="http://pf.kakao.com/_MaxmXC/29180221"
 )
 
-kb_home = Keyboard(['인형 검색', '장비 검색', '작전보고서 계산', '36베이스 바로가기', '유용한 정보 모음', '자유 입력'])
+kb_home = Keyboard(['인형 검색', '장비 검색', '작전보고서 계산', '36베이스 바로가기', '유용한 정보 모음', '대화하기'])
 kb_useful_info = Keyboard(["36베이스", "군수지원 계산기", "소녀전선 구글시트", "소전DB", "편성 시뮬레이터", "철혈시트", "DPS 시뮬레이터", "소전사전", "돌아가기"])
 
 d_useful_info = {
