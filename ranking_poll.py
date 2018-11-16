@@ -3,13 +3,14 @@ import json
 
 
 config = json.load(open("config.json", "r", encoding='utf-8'))["ranking"]
+rk_event_name = config["event_name"]
 rk_update_time = config["ranking_update_time"]
 rk_expire_time = datetime.datetime.strptime(config["expire_time"], "%Y-%m-%d %H:%M")
 
 ins_sql = (
     "INSERT INTO ranking"
-    "(date, user_key, score, per, ranking, comment)"
-    "VALUES (%s, %s, %s, %s, %s, %s);"
+    "(date, user_key, event_name, score, per, ranking, comment)"
+    "VALUES (%s, %s, %s, %s, %s, %s, %s);"
 )
 
 get_sql = (
@@ -54,7 +55,7 @@ class EventRankPoll():
         if self.get_today(key):
             self.cur.execute(upd_sql, (score, per, ranking, comment, date.date(), key))
         else:
-            self.cur.execute(ins_sql, (date.date(), key, score, per, ranking, comment))
+            self.cur.execute(ins_sql, (date.date(), key, rk_event_name, score, per, ranking, comment))
 
     def get(self, user_key):
         self.cur.execute(get_sql, user_key)

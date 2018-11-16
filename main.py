@@ -40,7 +40,7 @@ re_rp_calc = re.compile(
 re_rank_poll = re.compile(r"([0-9]{0,6})[점]? ([0-9]{1,3})(퍼센트|퍼|%|등|)[ ]?(.+)?$")
 
 # RankingPoll
-# rank = EventRankPoll(conn)
+rank = EventRankPoll(conn)
 
 # girlsfrontline_core_python
 core = gfl_core.core.Core(cf['gfl_core']['dir'])
