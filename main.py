@@ -39,6 +39,8 @@ re_rp_calc = re.compile(
 )
 re_rank_poll = re.compile(r"([0-9]{0,6})[점]? ([0-9]{1,3})(퍼센트|퍼|%|등|)[ ]?(.+)?$")
 
+cancel_list = {'돌아가기', '취소', '종료', '잘가', 'ㅂㅂ', '꺼져', '뒤로', '뒤로가기', '나가기'}
+
 # RankingPoll
 rank = EventRankPoll(conn)
 
@@ -69,34 +71,45 @@ def search_doll(data):
     return rp.search_doll
 
 
-@chatter.rule(action='*', src='인형 검색 페이지', dest='홈')
+@chatter.rule(action='*', src='인형 검색 페이지')
 def searched_doll(data):
     re_match = re_build_time.match(data['content'].strip())
-    # res = core.find_nickname(data['content'].strip(), 'doll')
-    if re_match:
+    res = core.find_nickname(data['content'].strip(), 'doll')
+    if data['content'] in cancel_list:
+        return cancel(data)
+    elif re_match:
         b_hour, b_min = re_match.groups(default='0')
         build_time = int(b_hour) * 3600 + int(b_min) * 60
         # searched(dict): 코어에서 나온 객체들
         searched = [core.l10n("ko-KR", "doll", n) for n in core.doll.build_time.get(build_time, {})]
-        dolls = ["{name}: {rank}성 {Type}".format(**n) for n in searched]
-        if dolls and build_time > 0:
-            msg = "찾은 인형 목록:\n{0}".format("\n".join(dolls))
+        if searched and build_time > 0:
+            if len(searched) == 1:
+                msg = Text(rp.f_msg_free_input_info["doll"].format(**searched[0]))
+                msg += MessageButton("상세 정보", searched[0]['link'])
+                msg += Photo(**searched[0]["photo"])
+                adv = Keyboard(type="text")
+            else:
+                dolls = ["{name}: {rank}성 {Type}".format(**n) for n in searched]
+                msg = Text("찾은 인형 목록:\n{0}".format("\n".join(dolls)))
+                adv = Keyboard([n['name'] for n in searched] + ["돌아가기"])
         else:
-            msg = "검색 결과가 없습니다."
-    # elif res:
-    #     if isinstance(res, tuple):
-    #         msg = Text(rp.f_msg_free_input_info[res[0]].format(**res[1])) + MessageButton("상세 정보", res[1]['link'])
-    #         if "photo" in res[1]:
-    #             msg += Photo(**res[1]["photo"])
-    #         adv = Keyboard(type="text")
-    #     else:
-    #         msg = Text("무엇을 찾으셨나요?")
-    #         adv = Keyboard(buttons=res)
+            msg = Text("검색 결과가 없습니다.")
+            adv = Keyboard(type='text')
+    elif res:
+        if isinstance(res, tuple):
+            msg = Text(rp.f_msg_free_input_info[res[0]].format(**res[1])) + MessageButton("상세 정보", res[1]['link'])
+            msg += Photo(**res[1]["photo"])
+            adv = Keyboard(type="text")
+        else:
+            msg = Text("무엇을 찾으셨나요?")
+            adv = Keyboard(buttons=res)
     else:
-        msg = "올바르지 않은 입력입니다."
+        msg = Text("올바르지 않은 입력입니다.")
+        adv = Keyboard(type='text')
     extra_data = dict(user_status='인형 검색 페이지', **data)
-    logger.info(msg, extra=extra_data)
-    return Text(msg) + chatter.home()
+    print(msg.text)
+    logger.info(msg.text if isinstance(msg, Text) else msg.text.text, extra=extra_data)
+    return msg + adv
 
 
 @chatter.rule(action='장비 검색', src='홈', dest='장비 검색 페이지')
@@ -248,7 +261,7 @@ def start_free_input(data):
 
 @chatter.rule(action="*", src="자유 입력")
 def free_input_check(data):
-    if data['content'] in {'돌아가기', '취소', '종료', '잘가', 'ㅂㅂ', '꺼져'}:
+    if data['content'] in cancel_list:
         return cancel(data)
     elif data['content'][:2] in {'ㅇㅎ', '인형', '제조'}:
         data['content'] = data['content'][2:]
