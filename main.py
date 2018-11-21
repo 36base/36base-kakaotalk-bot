@@ -107,7 +107,6 @@ def searched_doll(data):
         msg = Text("올바르지 않은 입력입니다.")
         adv = Keyboard(type='text')
     extra_data = dict(user_status='인형 검색 페이지', **data)
-    print(msg.text)
     logger.info(msg.text if isinstance(msg, Text) else msg.text.text, extra=extra_data)
     return msg + adv
 
