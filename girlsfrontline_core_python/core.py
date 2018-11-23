@@ -83,7 +83,7 @@ class Internationalization():
 
     def gun(self, lang, gun_id, num, default='', mod=False):
         if gun_id > 20000 and mod:
-            return self.data[lang].get(f"gun-{num}{gun_id:0>7}", default) + "Mod"
+            return "개조 " + self.data[lang].get(f"gun-{num}{gun_id:0>7}", default)
         else:
             return self.data[lang].get(f"gun-{num}{gun_id:0>7}", default)
 
@@ -138,6 +138,7 @@ class Core:
                 else:
                     # 개조 인형들. Mod 를 뒤에 붙여 구분 가능하게 변경.
                     self._alias[f"{self.i18n.data['ko-KR'][f'gun-1{doll_id:0>7}']}Mod".lower()] = [('doll', doll_id)]
+                    self._alias[f"개조 {self.i18n.data['ko-KR'][f'gun-1{doll_id:0>7}']}".lower()] = [('doll', doll_id)]
             else:
                 # 이름이 없는경우 codename 으로 대체
                 self._alias[self.doll.id[doll_id]["codename"].lower()] = [('doll', doll_id)]
@@ -164,10 +165,17 @@ class Core:
                 # alias: 리스트 안에 있던 별명 목록들
                 # values: id 별로 대응되는 별명 들어있는 리스트
                 for alias in values:
-                    if alias in self._alias:
+                    # 해당 별명 key 가 이미 목록에 존재하면 append, 아니면 설정
+                    if alias.lower() in self._alias:
                         self._alias[alias.lower()].append((alias_type, int(key)))
                     else:
                         self._alias[alias.lower()] = [(alias_type, int(key))]
+                    # 개조가 있는 인형일 경우
+                    if alias_type == "doll" and (int(key) + 20000) in self.doll.id.keys():
+                        if "개조 " + alias.lower() in self._alias:
+                            self._alias["개조 " + alias.lower()].append((alias_type, int(key) + 20000))
+                        else:
+                            self._alias["개조 " + alias.lower()] = [(alias_type, int(key) + 20000)]
         return
 
     def get_names(self, items: list):
