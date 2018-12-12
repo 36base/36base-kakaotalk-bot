@@ -232,7 +232,7 @@ def rank_poll_input(data):
     if re_match:
         score, num, mode, comment = re_match.groups()
         if 0 < int(num) <= 100:
-            if mode in {"등"}:
+            if mode in {"등", "위"}:
                 percent, ranking = 0, int(num)
                 msg = "{0}점 {1}등으로 등록 완료했습니다. 감사합니다.".format(score, ranking)
             else:
