@@ -342,7 +342,7 @@ def fallback(data):
 # Flask Func
 
 
-@application.route('/keyboard', methods=['GET'])
+@application.route('/keyboard', methods=['GET', 'HEAD'])
 def keyboard():
     return jsonify(chatter.home())
 
